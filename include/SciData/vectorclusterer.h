@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 #include <SciData/vectorfield3d.h>
-#include <Utilities/mathfu_utilities.h>
+#include <Utilities/boost_math_utilities.h>
 
 /**
  * @author Andrea Salvadori and Marco Fusè
@@ -23,7 +23,7 @@ private:
 
 	struct GridCoordsHasher
 	{
-		size_t operator()(mathfu::Vector<uint,3> p) const
+		size_t operator()(SNS::Utilities::Vector3u p) const
 		{
 			// Computes an esh table for the voxel's coordinates
 			// using the "prime number multiplication" algorithm.
@@ -31,11 +31,9 @@ private:
 			// See: http://myeyesareblind.com/2017/02/06/Combine-hash-values/
 
 			const size_t k1 = 13; // must be a prime number
-			const size_t k2 = 71; // must be a prime number
-
-			size_t hx = std::hash<uint>()(p.x);
-			size_t hy = std::hash<uint>()(p.y);
-			size_t hz = std::hash<uint>()(p.z);
+			const size_t k2 = 71; // must be a prime number			size_t hx = std::hash<uint>()(p(0));
+			size_t hy = std::hash<uint>()(p(1));
+			size_t hz = std::hash<uint>()(p(2));
 
 			size_t hash = k1;
 			hash = (hash * k2) + hx;
@@ -47,24 +45,21 @@ private:
 	};
 
 	struct GridCoordsComparator
-	{
-		bool operator()(const mathfu::Vector<uint,3>& p1,
-						const mathfu::Vector<uint,3>& p2) const
+	{		bool operator()(const SNS::Utilities::Vector3u& p1,
+						const SNS::Utilities::Vector3u& p2) const
 		{
-			return (p1.x == p2.x) && (p1.y == p2.y) && (p1.z == p2.z);
+			return (p1(0) == p2(0)) && (p1(1) == p2(1)) && (p1(2) == p2(2));
 		}
 	};
 
 	struct Cluster
-	{
-		mathfu::Vector<double,3> Centroid;
-		mathfu::Vector<double,3> Vector;
+	{		SNS::Utilities::Vector3d Centroid;
+		SNS::Utilities::Vector3d Vector;
 		double Volume;
-
-		std::unordered_set< mathfu::Vector<uint,3>,
+		std::unordered_set< SNS::Utilities::Vector3u,
 							GridCoordsHasher,
 							GridCoordsComparator > Voxels;
-		std::unordered_set< mathfu::Vector<uint,3>,
+		std::unordered_set< SNS::Utilities::Vector3u,
 							GridCoordsHasher,
 							GridCoordsComparator > Neighbours;
 		size_t Level;
@@ -79,33 +74,31 @@ private:
 private:
 
 	ClusterSP mergeClusters(ClusterSP c1, ClusterSP c2, size_t level);
-
-	double computeDirMagError(const mathfu::Vector<double,3>& V1,
-							  const mathfu::Vector<double,3>& V2);
+	double computeDirMagError(const SNS::Utilities::Vector3d& V1,
+							  const SNS::Utilities::Vector3d& V2);
 
 	// Returns 0 when P1 == P2 and "err_max" when len(P2-P1) = max_distance.
 	// Otherwise returns the linear iterpolation between these two values.
-	double computePosError_Version1(const mathfu::Vector<double,3>& P1,
-									const mathfu::Vector<double,3>& P2,
+	double computePosError_Version1(const SNS::Utilities::Vector3d& P1,
+									const SNS::Utilities::Vector3d& P2,
 									double max_distance, double err_max);
-
 	// Returns 1 when P1 == P2 and "err_max" when len(P2-P1) = max_distance.
 	// Otherwise returns the linear iterpolation between these two values.
-	double computePosError_Version2(const mathfu::Vector<double,3>& P1,
-									const mathfu::Vector<double,3>& P2,
+	double computePosError_Version2(const SNS::Utilities::Vector3d& P1,
+									const SNS::Utilities::Vector3d& P2,
 									double max_distance, double err_max);
 
-	double computeError_Version1(const mathfu::Vector<double,3>& V1,
-								 const mathfu::Vector<double,3>& P1,
-								 const mathfu::Vector<double,3>& V2,
-								 const mathfu::Vector<double,3>& P2,
+	double computeError_Version1(const SNS::Utilities::Vector3d& V1,
+								 const SNS::Utilities::Vector3d& P1,
+								 const SNS::Utilities::Vector3d& V2,
+								 const SNS::Utilities::Vector3d& P2,
 								 double max_distance, double pos_err_max,
 								 double weight);
 
-	double computeError_Version2(const mathfu::Vector<double,3>& V1,
-								 const mathfu::Vector<double,3>& P1,
-								 const mathfu::Vector<double,3>& V2,
-								 const mathfu::Vector<double,3>& P2,
+	double computeError_Version2(const SNS::Utilities::Vector3d& V1,
+								 const SNS::Utilities::Vector3d& P1,
+								 const SNS::Utilities::Vector3d& V2,
+								 const SNS::Utilities::Vector3d& P2,
 								 double max_distance, double pos_err_max);
 
 	ClusterSP performClustering(ConstVectorField3DSP grid);

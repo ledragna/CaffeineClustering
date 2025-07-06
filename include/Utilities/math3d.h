@@ -8,10 +8,13 @@
 #include <QVector3D>
 #include <QVector>
 
-#include <mathfu/vector.h>
+#include <boost/numeric/ublas/vector.hpp>
 
 #include <Utilities/floating_point.h>
 #include <Utilities/log.h>
+
+// Type aliases for easier migration
+using Vector3d = boost::numeric::ublas::vector<double>;
 
 /**
  * @author Andrea Salvadori
@@ -133,9 +136,9 @@ void findOrthonormalBasis(QVector3D& inoutPseudoZ,
  *
  * @throw std::invalid_argument If inoutVector1 is a null vector.
  */
-void findOrthonormalBasis(mathfu::Vector<double,3>& inoutPseudoZ,
-						  mathfu::Vector<double,3>& outPseudoY,
-						  mathfu::Vector<double,3>& outPseudoX);
+void findOrthonormalBasis(Vector3d& inoutPseudoZ,
+						  Vector3d& outPseudoY,
+						  Vector3d& outPseudoX);
 
 /**
  * @brief	Converts the provided window coordinates in the 3D space.
@@ -242,12 +245,11 @@ T linearCombination(const std::vector<const T*>& elements,
  */
 template<typename T>
 T trilinearInterpolation(const std::array<T,8>& cubeValues,
-						 const mathfu::Vector<double,3>& normCoords)
-{
-	// Clamps the provided coordinates in the range [0,1]
-	double normCoordsX = qBound(0.0, normCoords.x, 1.0);
-	double normCoordsY = qBound(0.0, normCoords.y, 1.0);
-	double normCoordsZ = qBound(0.0, normCoords.z, 1.0);
+						 const Vector3d& normCoords)
+{	// Clamps the provided coordinates in the range [0,1]
+	double normCoordsX = qBound(0.0, normCoords(0), 1.0);
+	double normCoordsY = qBound(0.0, normCoords(1), 1.0);
+	double normCoordsZ = qBound(0.0, normCoords(2), 1.0);
 
 	// Little optimization: precomputes 1-normCoordsX/Y/Z
 	double normCoordsNegX = 1.0-normCoordsX;
@@ -406,10 +408,10 @@ bool closestPointsBetweenLines(	const QVector3D& ray1Origin,
  *
  * @return	Returns true if the ray intersects the plane, false otherwise.
  */
-bool rayPlaneIntersection(	const mathfu::Vector<double,3>& rayOrigin,
-							const mathfu::Vector<double,3>& rayDir,
-							const mathfu::Vector<double,3>& planePoint,
-							const mathfu::Vector<double,3>& planeNormal,
+bool rayPlaneIntersection(	const Vector3d& rayOrigin,
+							const Vector3d& rayDir,
+							const Vector3d& planePoint,
+							const Vector3d& planeNormal,
 							double& out_t);
 
 
@@ -458,10 +460,10 @@ bool rayPlaneIntersection(	const mathfu::Vector<double,3>& rayOrigin,
  * @see		"Real-time collision detection" by Ericson, Christer.
  *			CRC Press, 2004. Pag. 179-181
  */
-bool rayAABBIntersection(const mathfu::Vector<double,3>& rayOrigin,
-						 const mathfu::Vector<double,3>& rayDir,
-						 const mathfu::Vector<double,3>& aabbMinXYZ,
-						 const mathfu::Vector<double,3>& aabbMaxXYZ,
+bool rayAABBIntersection(const Vector3d& rayOrigin,
+						 const Vector3d& rayDir,
+						 const Vector3d& aabbMinXYZ,
+						 const Vector3d& aabbMaxXYZ,
 						 double& outTmin, double& outTmax);
 
 } }

@@ -2,6 +2,7 @@
 #define VECTORCOMPARATOR_H
 
 #include <SciData/grid_clusterer.h>
+#include <Utilities/boost_math_utilities.h>
 
 /**
  * @author Andrea Salvadori and Marco Fusè
@@ -32,26 +33,26 @@ namespace SNS { namespace SciData
 		 *			of vectors passed as parameter. The more the returned value
 		 *			is high, the more the two cluster are dissimilar.
 		 */
-		double operator()(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-						  const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
+		double operator()(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+						  const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
 
 	private:
 
-		double magnitudeComparator(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-								   const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		double distanceComparator(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-								  const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		double directionComparator(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-								   const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		double euclideanDirMagComparison(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-										 const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		double teleaDirMagComparison(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-									 const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		double teleaDirMagAsymmetric(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-									 const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		double volumeComparison(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1,
-								const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster2) const;
-		bool zeroValue(const SNS::SciData::GridClusterer<mathfu::Vector<double,3>>::Cluster* cluster1) const;
+		double magnitudeComparator(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+								   const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double distanceComparator(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+								  const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double directionComparator(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+								   const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double euclideanDirMagComparison(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+										 const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double teleaDirMagComparison(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+									 const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double teleaDirMagAsymmetric(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+									 const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double volumeComparison(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
+								const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		bool zeroValue(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1) const;
 
 	};
 

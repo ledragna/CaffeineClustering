@@ -13,7 +13,7 @@
 #include <Utilities/array3d.h>
 #include <Utilities/iterable_priority_queue.h>
 #include <Utilities/index3d_hashing.h>
-#include <Utilities/mathfu_utilities.h>
+#include <Utilities/boost_math_utilities.h>
 #include <Utilities/log.h>
 
 /**
@@ -43,7 +43,7 @@ namespace SNS { namespace SciData
 		{
 			friend class GridClusterer;
 		public:
-			mathfu::Vector<double,3> Centroid;
+			boost::numeric::ublas::vector<double> Centroid;
 			T Value;
 
 			/*** FOR INTERNAL AND DEBUG USE ONLY ***/
@@ -139,8 +139,8 @@ namespace SNS { namespace SciData
 													std::string& warning,
 													bool freeUnusedNeighbours = true)
 		{
-			typedef mathfu::Vector<double,3> dvec3;
-			typedef mathfu::Vector<unsigned,3> uvec3;
+			typedef boost::numeric::ublas::vector<double> dvec3;
+			typedef boost::numeric::ublas::vector<unsigned> uvec3;
 			typedef std::shared_ptr<GridClusterer<T>::Cluster> ClusterSP;
 
 			if(!grid) Utilities::throwAndPrintError<std::invalid_argument>("GridClusterer::performClustering - Null grid!");

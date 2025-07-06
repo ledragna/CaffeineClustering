@@ -6,7 +6,15 @@
 
 #include <cmath>
 
-#include <Utilities/mathfu_utilities.h>
+#include <Utilities/boost_math_utilities.h>
+
+// Using declarations for convenience
+using SNS::Utilities::Vector3d;
+using SNS::Utilities::makeVector3d;
+using SNS::Utilities::normalize;
+using SNS::Utilities::cross;
+using SNS::Utilities::dot;
+using SNS::Utilities::fuzzyEqual;
 
 QColor SNS::Utilities::mixQColors(double t,
 										const QColor& startColor,
@@ -95,10 +103,10 @@ void SNS::Utilities::BSplinePath(const QVector3D controlPoints[],
 }
 
 
-bool SNS::Utilities::rayAABBIntersection( const mathfu::Vector<double, 3>& rayOrigin,
-												const mathfu::Vector<double, 3>& rayDir,
-												const mathfu::Vector<double, 3>& aabbMinXYZ,
-												const mathfu::Vector<double, 3>& aabbMaxXYZ,
+bool SNS::Utilities::rayAABBIntersection( const Vector3d& rayOrigin,
+												const Vector3d& rayDir,
+												const Vector3d& aabbMinXYZ,
+												const Vector3d& aabbMaxXYZ,
 												double& outTmin, double& outTmax)
 {
 	const double EPSILON = 1e-4;
@@ -142,21 +150,20 @@ bool SNS::Utilities::rayAABBIntersection( const mathfu::Vector<double, 3>& rayOr
 }
 
 
-bool SNS::Utilities::rayPlaneIntersection(const mathfu::Vector<double, 3>& rayOrigin,
-												const mathfu::Vector<double, 3>& rayDir,
-												const mathfu::Vector<double, 3>& planePoint,
-												const mathfu::Vector<double, 3>& planeNormal,
+bool SNS::Utilities::rayPlaneIntersection(const Vector3d& rayOrigin,
+												const Vector3d& rayDir,
+												const Vector3d& planePoint,
+												const Vector3d& planeNormal,
 												double& out_t)
 {
-	typedef mathfu::Vector<double, 3> dvec3;
-
-	dvec3 N = planeNormal.Normalized();
-	double NdotD = dvec3::DotProduct(N, rayDir);
+	typedef Vector3d dvec3;
+	dvec3 N = normalize(planeNormal);
+	double NdotD = dot(N, rayDir);
 	// If the ray is (almost) parallel to the plane, there is no intersection
 	const double EPSILON = 1e-5;
 	if(std::fabs(NdotD) < EPSILON) return false;
 
-	out_t = dvec3::DotProduct(planePoint - rayOrigin, N) / NdotD;
+	out_t = dot(planePoint - rayOrigin, N) / NdotD;
 	return true;
 }
 
@@ -208,33 +215,31 @@ void SNS::Utilities::findOrthonormalBasis(QVector3D& inoutPseudoZ,
 	outPseudoX = v3;
 }
 
-void SNS::Utilities::findOrthonormalBasis(mathfu::Vector<double,3>& inoutPseudoZ,
-										  mathfu::Vector<double,3>& outPseudoY,
-										  mathfu::Vector<double,3>& outPseudoX)
+void SNS::Utilities::findOrthonormalBasis(Vector3d& inoutPseudoZ,
+										  Vector3d& outPseudoY,
+										  Vector3d& outPseudoX)
 {
-	typedef mathfu::Vector<double,3> dvec3;
-
-	if(fuzzyEqual<double,3>(inoutPseudoZ, dvec3(0,0,0), 1e-12f))
+	typedef Vector3d dvec3;
+	if(fuzzyEqual(inoutPseudoZ, makeVector3d(0,0,0), 1e-12))
 		throwAndPrintError<std::invalid_argument>(
 			"Utilities::findOrthogonalBase : the input is a null vector!"
 		);
 
-	dvec3 v1 = inoutPseudoZ.Normalized();
+	dvec3 v1 = normalize(inoutPseudoZ);
 
 	// Finds, among X/Y/Z, the axis which "most orthogonal" to inoutVector1
-	double v1XAbs = fabs(v1.x);
-	double v1YAbs = fabs(v1.y);
-	double v1ZAbs = fabs(v1.z);
+	double v1XAbs = fabs(v1(0));
+	double v1YAbs = fabs(v1(1));
+	double v1ZAbs = fabs(v1(2));
 	dvec3 almostOrthogonalToV1;
 	if( (v1XAbs <= v1YAbs) && (v1XAbs <= v1ZAbs) )
-		almostOrthogonalToV1 = dvec3(1,0,0);
+		almostOrthogonalToV1 = makeVector3d(1,0,0);
 	else if( (v1YAbs <= v1XAbs) && (v1YAbs <= v1ZAbs) )
-		almostOrthogonalToV1 = dvec3(0,1,0);
+		almostOrthogonalToV1 = makeVector3d(0,1,0);
 	else
-		almostOrthogonalToV1 = dvec3(0,0,1);
-
-	dvec3 v2 = dvec3::CrossProduct(v1, almostOrthogonalToV1).Normalized();
-	dvec3 v3 = dvec3::CrossProduct(v2, v1).Normalized();
+		almostOrthogonalToV1 = makeVector3d(0,0,1);
+	dvec3 v2 = normalize(cross(v1, almostOrthogonalToV1));
+	dvec3 v3 = normalize(cross(v2, v1));
 
 	inoutPseudoZ = v1;
 	outPseudoY = v2;
@@ -278,84 +283,84 @@ SNS::Utilities::AxesSimilarity SNS::Utilities::computeGlobalAxesSimilarity(
 	if( (fabs(normV1.x()) >= fabs(normV2.x())) &&
 		(fabs(normV1.x()) >= fabs(normV3.x())) )
 	{
-		results.isV1SimilarToX = signbit(normV1.x()) ? -1 : 1;
+		results.isV1SimilarToX = std::signbit(normV1.x()) ? -1 : 1;
 		results.isV2SimilarToX = 0;
 		results.isV3SimilarToX = 0;
 
 		if(fabs(normV2.y()) >= fabs(normV3.y()))
 		{
 			results.isV1SimilarToY = 0;
-			results.isV2SimilarToY = signbit(normV2.y()) ? -1 : 1;
+			results.isV2SimilarToY = std::signbit(normV2.y()) ? -1 : 1;
 			results.isV3SimilarToY = 0;
 
 			results.isV1SimilarToZ = 0;
 			results.isV2SimilarToZ = 0;
-			results.isV3SimilarToZ = signbit(normV3.z()) ? -1 : 1;
+			results.isV3SimilarToZ = std::signbit(normV3.z()) ? -1 : 1;
 		}
 		else
 		{
 			results.isV1SimilarToZ = 0;
-			results.isV2SimilarToZ = signbit(normV2.z()) ? -1 : 1;
+			results.isV2SimilarToZ = std::signbit(normV2.z()) ? -1 : 1;
 			results.isV3SimilarToZ = 0;
 
 			results.isV1SimilarToY = 0;
 			results.isV2SimilarToY = 0;
-			results.isV3SimilarToY = signbit(normV3.y()) ? -1 : 1;
+			results.isV3SimilarToY = std::signbit(normV3.y()) ? -1 : 1;
 		}
 	}
 	else if( (fabs(normV1.y()) >= fabs(normV2.y())) &&
 			 (fabs(normV1.y()) >= fabs(normV3.y())) )
 	{
-		results.isV1SimilarToY = signbit(normV1.y()) ? -1 : 1;
+		results.isV1SimilarToY = std::signbit(normV1.y()) ? -1 : 1;
 		results.isV2SimilarToY = 0;
 		results.isV3SimilarToY = 0;
 
 		if(fabs(normV2.x()) >= fabs(normV3.x()))
 		{
 			results.isV1SimilarToX = 0;
-			results.isV2SimilarToX = signbit(normV2.x()) ? -1 : 1;
+			results.isV2SimilarToX = std::signbit(normV2.x()) ? -1 : 1;
 			results.isV3SimilarToX = 0;
 
 			results.isV1SimilarToZ = 0;
 			results.isV2SimilarToZ = 0;
-			results.isV3SimilarToZ = signbit(normV3.z()) ? -1 : 1;
+			results.isV3SimilarToZ = std::signbit(normV3.z()) ? -1 : 1;
 		}
 		else
 		{
 			results.isV1SimilarToZ = 0;
-			results.isV2SimilarToZ = signbit(normV2.z()) ? -1 : 1;
+			results.isV2SimilarToZ = std::signbit(normV2.z()) ? -1 : 1;
 			results.isV3SimilarToZ = 0;
 
 			results.isV1SimilarToX = 0;
 			results.isV2SimilarToX = 0;
-			results.isV3SimilarToX = signbit(normV3.x()) ? -1 : 1;
+			results.isV3SimilarToX = std::signbit(normV3.x()) ? -1 : 1;
 		}
 	}
 	else
 	{
-		results.isV1SimilarToZ = signbit(normV1.z()) ? -1 : 1;
+		results.isV1SimilarToZ = std::signbit(normV1.z()) ? -1 : 1;
 		results.isV2SimilarToZ = 0;
 		results.isV3SimilarToZ = 0;
 
 		if(fabs(normV2.x()) >= fabs(normV3.x()))
 		{
 			results.isV1SimilarToX = 0;
-			results.isV2SimilarToX = signbit(normV2.x()) ? -1 : 1;
+			results.isV2SimilarToX = std::signbit(normV2.x()) ? -1 : 1;
 			results.isV3SimilarToX = 0;
 
 			results.isV1SimilarToY = 0;
 			results.isV2SimilarToY = 0;
-			results.isV3SimilarToY = signbit(normV3.y()) ? -1 : 1;
+			results.isV3SimilarToY = std::signbit(normV3.y()) ? -1 : 1;
 		}
 		else
 		{
 			results.isV1SimilarToY = 0;
-			results.isV2SimilarToY = signbit(normV2.y()) ? -1 : 1;
+			results.isV2SimilarToY = std::signbit(normV2.y()) ? -1 : 1;
 			results.isV3SimilarToY = 0;
 
 			results.isV1SimilarToX = 0;
 			results.isV2SimilarToX = 0;
-			results.isV3SimilarToX = signbit(normV3.x()) ? -1 : 1;
+			results.isV3SimilarToX = std::signbit(normV3.x()) ? -1 : 1;
 		}
 	}
 

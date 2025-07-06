@@ -1,17 +1,23 @@
 #ifndef DATAGRID3D_H
 #define DATAGRID3D_H
 
-#include <Utilities/mathfu_utilities.h>
+#include <Utilities/boost_math_utilities.h>
 #include <Utilities/math3d.h>
 #include <Utilities/log.h>
 
-#include <mathfu/matrix.h>
-#include <mathfu/vector.h>
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
 #include <memory>
 #include <array>
 #include <vector>
 #include <stdexcept>
+
+// Type aliases for easier migration
+using Vector3d = SNS::Utilities::Vector3d;
+using Vector4d = SNS::Utilities::Vector4d;
+using Matrix4d = SNS::Utilities::Matrix4d;
+using Vector3u = SNS::Utilities::Vector3u;
 
 /**
  * @author Andrea Salvadori
@@ -75,13 +81,13 @@ namespace SNS { namespace SciData
 		 *		  of the grid (from 0 to _nPoints[i]-1 for each dimension)
 		 *		  to world (global) coordinates.
 		 */
-		mathfu::Matrix<double,4> _localToWorld;
+		Matrix4d _localToWorld;
 
 		/**
 		 * @brief Change of reference frame matrix from world (global)
 		 *		  coordinates to the local reference frame of the grid.
 		 */
-		mathfu::Matrix<double,4> _worldToLocal;
+		Matrix4d _worldToLocal;
 
 		/**
 		 * @brief 3D matrix of values
@@ -121,35 +127,35 @@ namespace SNS { namespace SciData
 		 *			returns the noormalized coordinates (in the range [0,1])
 		 *			of the specified point within the cube (outNormCoords).
 		 */
-		void getCubeInfo(	const mathfu::Vector<double,3>& localCoords,
-							Cube& outCube, mathfu::Vector<double,3>& outNormCoords) const
+		void getCubeInfo(	const Vector3d& localCoords,
+							Cube& outCube, Vector3d& outNormCoords) const
 		{
-			unsigned cubeOriginX = unsigned(localCoords.x);
+			unsigned cubeOriginX = unsigned(localCoords(0));
             if(cubeOriginX == (_nPoints[0]-1u))
 			{
 				cubeOriginX -= 1u;
 				outNormCoords[0] = 1.0;
 			}
 			else
-				outNormCoords[0] = localCoords.x - cubeOriginX;
+				outNormCoords[0] = localCoords(0) - cubeOriginX;
 
-			unsigned cubeOriginY = unsigned(localCoords.y);
+			unsigned cubeOriginY = unsigned(localCoords(1));
             if(cubeOriginY == (_nPoints[1]-1u))
 			{
 				cubeOriginY -= 1u;
 				outNormCoords[1] = 1.0;
 			}
 			else
-				outNormCoords[1] = localCoords.y - cubeOriginY;
+				outNormCoords[1] = localCoords(1) - cubeOriginY;
 
-			unsigned cubeOriginZ = unsigned(localCoords.z);
+			unsigned cubeOriginZ = unsigned(localCoords(2));
             if(cubeOriginZ == (_nPoints[2]-1u))
 			{
 				cubeOriginZ -= 1u;
 				outNormCoords[2] = 1.0;
 			}
 			else
-				outNormCoords[2] = localCoords.z - cubeOriginZ;
+				outNormCoords[2] = localCoords(2) - cubeOriginZ;
 
 			for(unsigned i = 0; i < 8; i++)
 			{
@@ -184,8 +190,8 @@ namespace SNS { namespace SciData
 			_nPoints[0] = nPointsX;
 			_nPoints[1] = nPointsY;
 			_nPoints[2] = nPointsZ;
-			_localToWorld = mathfu::Matrix<double,4>::Identity();
-			_worldToLocal = mathfu::Matrix<double,4>::Identity();
+			_localToWorld = SNS::Utilities::identityMatrix4d();
+			_worldToLocal = SNS::Utilities::identityMatrix4d();
 
 			_values.resize(nPointsX);
 			for(unsigned x = 0; x < nPointsX; x++)
@@ -229,8 +235,8 @@ namespace SNS { namespace SciData
 			// Clears the source
 			other._name.clear();
 			other._nPoints = {0,0,0};
-			other._localToWorld = mathfu::Matrix<double,4>::Identity();
-			other._worldToLocal = mathfu::Matrix<double,4>::Identity();
+			other._localToWorld = SNS::Utilities::identityMatrix4d();
+			other._worldToLocal = SNS::Utilities::identityMatrix4d();
 			other._values.clear();
 		}
 
@@ -268,8 +274,8 @@ namespace SNS { namespace SciData
 				// Clears the source
 				other._name.clear();
 				other._nPoints = {0,0,0};
-				other._localToWorld = mathfu::Matrix<double,4>::Identity();
-				other._worldToLocal = mathfu::Matrix<double,4>::Identity();
+				other._localToWorld = SNS::Utilities::identityMatrix4d();
+				other._worldToLocal = SNS::Utilities::identityMatrix4d();
 				other._values.clear();
 			}
 
@@ -312,44 +318,43 @@ namespace SNS { namespace SciData
 		 * @brief	Returns the origin of the local reference frame of the grid
 		 *			(i.e. the point having [0,0,0] as local coordinates)
 		 *			expressed in the global reference frame.
-		 */
-		virtual mathfu::Vector<double,3> getOriginInWorldSpace() const
+		 */		virtual Vector3d getOriginInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,3).xyz();
+			return SNS::Utilities::xyz(SNS::Utilities::getColumn(_localToWorld,3));
 		}
 
 		/**
 		 * @brief	Returns the X axis of the local reference frame of the grid
 		 *			expressed in the global reference frame.
 		 */
-		virtual mathfu::Vector<double,3> getLocalXAxisInWorldSpace() const
+		virtual Vector3d getLocalXAxisInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,0).xyz();
+			return SNS::Utilities::getColumn(_localToWorld,0);
 		}
 
 		/**
 		 * @brief	Returns the Y axis of the local reference frame of the grid
 		 *			expressed in the global reference frame.
 		 */
-		virtual mathfu::Vector<double,3> getLocalYAxisInWorldSpace() const
+		virtual Vector3d getLocalYAxisInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,1).xyz();
+			return SNS::Utilities::getColumn(_localToWorld,1);
 		}
 
 		/**
 		 * @brief	Returns the Z axis of the local reference frame of the grid
 		 *			expressed in the global reference frame.
 		 */
-		virtual mathfu::Vector<double,3> getLocalZAxisInWorldSpace() const
+		virtual Vector3d getLocalZAxisInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,2).xyz();
+			return SNS::Utilities::getColumn(_localToWorld,2);
 		}
 
 		/**
 		 * @brief Returns the change of reference frame matrix from local
 		 *		  coordinates of the grid to world (global) coordinates.
 		 */
-		virtual const mathfu::Matrix<double,4>& getLocalToWorldTransform() const
+		virtual const Matrix4d& getLocalToWorldTransform() const
 		{
 			return _localToWorld;
 		}
@@ -358,7 +363,7 @@ namespace SNS { namespace SciData
 		 * @brief	Returns the change of reference frame matrix from
 		 *			world (global) coordinates to local coordinates of the grid.
 		 */
-		virtual const mathfu::Matrix<double,4>& getWorldToLocalTransform() const
+		virtual const Matrix4d& getWorldToLocalTransform() const
 		{
 			return _worldToLocal;
 		}
@@ -375,11 +380,10 @@ namespace SNS { namespace SciData
 		 *			since the matrix is not invertible.
 		 *
 		 * @param newLocalToWorld	The new change of reference frame matrix.
-		 */
-		virtual bool setLocalToWorldTransform(const mathfu::Matrix<double,4>& newLocalToWorld)
+		 */		virtual bool setLocalToWorldTransform(const Matrix4d& newLocalToWorld)
 		{
-			mathfu::Matrix<double,4> newWorldToLocal;
-			bool invertible = newLocalToWorld.InverseWithDeterminantCheck(&newWorldToLocal);
+			Matrix4d newWorldToLocal;
+			bool invertible = SNS::Utilities::InverseWithDeterminantCheck(newLocalToWorld, &newWorldToLocal);
 			if(!invertible) return false;
 
 			_localToWorld = newLocalToWorld;
@@ -408,18 +412,17 @@ namespace SNS { namespace SciData
 		 *
 		 * @note	The three specified vectors must form a basis,
 		 *			although it is not required for the basis to be orthogonal.
-		 */
-		virtual bool setLocalToWorldTransform(const mathfu::Vector<double,3>& worldOrigin,
-											  const mathfu::Vector<double,3>& localXInWorld,
-											  const mathfu::Vector<double,3>& localYInWorld,
-											  const mathfu::Vector<double,3>& localZInWorld)
+		 */		virtual bool setLocalToWorldTransform(const Vector3d& worldOrigin,
+											  const Vector3d& localXInWorld,
+											  const Vector3d& localYInWorld,
+											  const Vector3d& localZInWorld)
 		{
-			mathfu::Matrix<double,4> newLocalToWorld(
-				mathfu::Vector<double,4>(localXInWorld, 0),
-				mathfu::Vector<double,4>(localYInWorld, 0),
-				mathfu::Vector<double,4>(localZInWorld, 0),
-				mathfu::Vector<double,4>(worldOrigin, 1)
-			);
+			Matrix4d newLocalToWorld = SNS::Utilities::makeMatrix4d();
+			// Set columns of transformation matrix (Boost uses row-major order)
+			newLocalToWorld(0, 0) = localXInWorld(0); newLocalToWorld(0, 1) = localYInWorld(0); newLocalToWorld(0, 2) = localZInWorld(0); newLocalToWorld(0, 3) = worldOrigin(0);
+			newLocalToWorld(1, 0) = localXInWorld(1); newLocalToWorld(1, 1) = localYInWorld(1); newLocalToWorld(1, 2) = localZInWorld(1); newLocalToWorld(1, 3) = worldOrigin(1);
+			newLocalToWorld(2, 0) = localXInWorld(2); newLocalToWorld(2, 1) = localYInWorld(2); newLocalToWorld(2, 2) = localZInWorld(2); newLocalToWorld(2, 3) = worldOrigin(2);
+			newLocalToWorld(3, 0) = 0;                newLocalToWorld(3, 1) = 0;                newLocalToWorld(3, 2) = 0;                newLocalToWorld(3, 3) = 1;
 
 			return this->setLocalToWorldTransform(newLocalToWorld);
 		}
@@ -465,12 +468,11 @@ namespace SNS { namespace SciData
 											  double localZInWorld_0,
 											  double localZInWorld_1,
 											  double localZInWorld_2)
-		{
-			return this->setLocalToWorldTransform(
-				mathfu::Vector<double,3>(worldOrigin_0, worldOrigin_1, worldOrigin_2),
-				mathfu::Vector<double,3>(localXInWorld_0, localXInWorld_1, localXInWorld_2),
-				mathfu::Vector<double,3>(localYInWorld_0, localYInWorld_1, localYInWorld_2),
-				mathfu::Vector<double,3>(localZInWorld_0, localZInWorld_1, localZInWorld_2) );
+		{			return this->setLocalToWorldTransform(
+				SNS::Utilities::makeVector3d(worldOrigin_0, worldOrigin_1, worldOrigin_2),
+				SNS::Utilities::makeVector3d(localXInWorld_0, localXInWorld_1, localXInWorld_2),
+				SNS::Utilities::makeVector3d(localYInWorld_0, localYInWorld_1, localYInWorld_2),
+				SNS::Utilities::makeVector3d(localZInWorld_0, localZInWorld_1, localZInWorld_2) );
 		}
 
 		/**
@@ -484,23 +486,25 @@ namespace SNS { namespace SciData
 		 * @throw std::out_of_range	If the coordinates are out of
 		 *							the grid's bounds.
 		 */
-		virtual mathfu::Vector<double,3> fromLocalToWorldFrame(
-								const mathfu::Vector<uint,3>& localCoords) const
+		virtual Vector3d fromLocalToWorldFrame(
+								const Vector3u& localCoords) const
 		{
-			if( (localCoords.x > (_nPoints[0]-1u)) ||
-				(localCoords.y > (_nPoints[1]-1u)) ||
-				(localCoords.z > (_nPoints[2]-1u))   )
+			if( (localCoords(0) > (_nPoints[0]-1u)) ||
+				(localCoords(1) > (_nPoints[1]-1u)) ||
+				(localCoords(2) > (_nPoints[2]-1u))   )
 			{
 				Utilities::throwAndPrintError<std::out_of_range>(
 					"DataGrid3D::fromLocalToWorldFrame() : "
 					"Coordinates are out of bounds!"
 				);
-			}
-
-			mathfu::Vector<double,3> d_localCoords(localCoords.x,
-												   localCoords.y,
-												   localCoords.z);
-			return _localToWorld * d_localCoords;
+			}			Vector3d d_localCoords = SNS::Utilities::makeVector3d(localCoords(0),
+																 localCoords(1),
+																 localCoords(2));
+			// Convert to homogeneous coordinates (4D vector with w=1)
+			Vector4d homogeneous = SNS::Utilities::makeVector4d(d_localCoords(0), d_localCoords(1), d_localCoords(2), 1.0);
+			Vector4d result4d = boost::numeric::ublas::prod(_localToWorld, homogeneous);
+			// Extract 3D result
+			return SNS::Utilities::makeVector3d(result4d(0), result4d(1), result4d(2));
 		}
 
 		/**
@@ -516,11 +520,10 @@ namespace SNS { namespace SciData
 		 *
 		 * @note	The returned coordinates may refer to a point
 		 *			lying outside the grid!
-		 */
-		virtual mathfu::Vector<double,3> fromWorldToLocalFrame(
-						const mathfu::Vector<double,4>& worldCoordinates) const
+		 */		virtual Vector3d fromWorldToLocalFrame(
+						const Vector4d& worldCoordinates) const
 		{
-			return (_worldToLocal * worldCoordinates).xyz();
+			return SNS::Utilities::xyz(SNS::Utilities::multiply(_worldToLocal, worldCoordinates));
 		}
 
 
@@ -533,18 +536,18 @@ namespace SNS { namespace SciData
 		 * @throw std::out_of_range	If the coordinates are out of
 		 *							the grid's bounds.
          */
-		virtual T getValue(const mathfu::Vector<uint,3>& localCoords) const
+		virtual T getValue(const Vector3u& localCoords) const
         {
-			if( (localCoords.x > (_nPoints[0]-1u)) ||
-				(localCoords.y > (_nPoints[1]-1u)) ||
-				(localCoords.z > (_nPoints[2]-1u)) )
+			if( (localCoords(0) > (_nPoints[0]-1u)) ||
+				(localCoords(1) > (_nPoints[1]-1u)) ||
+				(localCoords(2) > (_nPoints[2]-1u)) )
             {
 				Utilities::throwAndPrintError<std::out_of_range>(
 					"DataGrid3D::getValue() : Coordinates are out of bounds!"
 				);
             }
 
-			return _values[localCoords.x][localCoords.y][localCoords.z];
+			return _values[localCoords(0)][localCoords(1)][localCoords(2)];
         }
 
         /**
@@ -562,18 +565,18 @@ namespace SNS { namespace SciData
 		 *			of the grid. If you need to set a new value for large part
 		 *			of the volume, consider the use of the fill() method.
          */
-		virtual void setValue(const mathfu::Vector<uint,3>& localCoords,
+		virtual void setValue(const Vector3u& localCoords,
 							  const T& value)
         {
-			if( (localCoords.x > (_nPoints[0]-1u)) ||
-				(localCoords.y > (_nPoints[1]-1u)) ||
-				(localCoords.z > (_nPoints[2]-1u)) )
+			if( (localCoords(0) > (_nPoints[0]-1u)) ||
+				(localCoords(1) > (_nPoints[1]-1u)) ||
+				(localCoords(2) > (_nPoints[2]-1u)) )
             {
                 Utilities::throwAndPrintError<std::out_of_range>(
                     "DataGrid3D::setValue() : Coordinates are out of bounds!");
             }
 
-			_values[localCoords.x][localCoords.y][localCoords.z] = value;
+			_values[localCoords(0)][localCoords(1)][localCoords(2)] = value;
         }
 
 		/**
@@ -696,14 +699,12 @@ namespace SNS { namespace SciData
 		virtual bool sameContent(const DataGrid3D<T>& other) const
 		{
 			// Same number of voxels?
-			if(!this->sameSize(other)) return false;
-
-			// Same values?
+			if(!this->sameSize(other)) return false;			// Same values?
 			for(unsigned x = 0; x < this->_nPoints[0]; x++)
 				for(unsigned y = 0; y < this->_nPoints[1]; y++)
 					for(unsigned z = 0; z < this->_nPoints[2]; z++)
 					{
-						if(this->_values[x][y][z] != other._values[x][y][z])
+						if(compareValues(this->_values[x][y][z], other._values[x][y][z]))
 							return false;
 					}
 
@@ -785,14 +786,14 @@ namespace SNS { namespace SciData
 		 * @throw std::out_of_range	If the coordinates are out
 		 *							of the grid's bounds.
 		 */
-		T sampleValue(const mathfu::Vector<double,3>& localCoords) const
+		T sampleValue(const Vector3d& localCoords) const
 		{
-			if( (localCoords.x < 0.0) ||
-				(localCoords.y < 0.0) ||
-				(localCoords.z < 0.0) ||
-				(localCoords.x > double(_nPoints[0]-1u)) ||
-				(localCoords.y > double(_nPoints[1]-1u)) ||
-				(localCoords.z > double(_nPoints[2]-1u)) )
+			if( (localCoords(0) < 0.0) ||
+				(localCoords(1) < 0.0) ||
+				(localCoords(2) < 0.0) ||
+				(localCoords(0) > double(_nPoints[0]-1u)) ||
+				(localCoords(1) > double(_nPoints[1]-1u)) ||
+				(localCoords(2) > double(_nPoints[2]-1u)) )
 			{
 				Utilities::throwAndPrintError<std::out_of_range>(
 					"DataGrid3D::sampleValue() : Coordinates are out of bounds!"
@@ -800,7 +801,7 @@ namespace SNS { namespace SciData
 			}
 
 			Cube cube;
-			mathfu::Vector<double,3> normCoords;
+			Vector3d normCoords;
 			this->getCubeInfo(localCoords, cube, normCoords);
 
 			return Utilities::trilinearInterpolation(cube.voxelsValues, normCoords);
@@ -878,12 +879,10 @@ namespace SNS { namespace SciData
 					Utilities::throwAndPrintError<std::invalid_argument>(
 								"DataGrid3D::operator*= : Trying to "
 								"sum two grids with different sizes!");
-			}
-
-			for(unsigned i = 0; i < _nPoints[0]; i++)
+			}			for(unsigned i = 0; i < _nPoints[0]; i++)
 				for(unsigned j = 0; j < _nPoints[1]; j++)
 					for(unsigned k = 0; k < _nPoints[2]; k++)
-						this->_values[i][j][k] *= other._values[i][j][k];
+						multiplyAssignValues(this->_values[i][j][k], other._values[i][j][k]);
 
 			return *this;
 		}
@@ -904,6 +903,38 @@ namespace SNS { namespace SciData
 						this->_values[i][j][k] *= factor;
 
 			return *this;
+		}
+
+		// Template specialization helpers for vector operations
+		template<typename U>
+		static bool compareValues(const U& v1, const U& v2) {
+			return v1 != v2;
+		}
+		
+		template<typename U>
+		static void multiplyAssignValues(U& v1, const U& v2) {
+			v1 *= v2;
+		}
+		
+		// Specializations for boost vectors
+		static bool compareValues(const boost::numeric::ublas::vector<double>& v1, 
+								const boost::numeric::ublas::vector<double>& v2) {
+			return !SNS::Utilities::vectorsEqual(v1, v2);
+		}
+		
+		static void multiplyAssignValues(boost::numeric::ublas::vector<double>& v1, 
+										const boost::numeric::ublas::vector<double>& v2) {
+			SNS::Utilities::elementWiseMultiplyAssign(v1, v2);
+		}
+		
+		static bool compareValues(const boost::numeric::ublas::vector<unsigned int>& v1, 
+								const boost::numeric::ublas::vector<unsigned int>& v2) {
+			return !SNS::Utilities::vectorsEqual(v1, v2);
+		}
+		
+		static void multiplyAssignValues(boost::numeric::ublas::vector<unsigned int>& v1, 
+										const boost::numeric::ublas::vector<unsigned int>& v2) {
+			SNS::Utilities::elementWiseMultiplyAssign(v1, v2);
 		}
 	};
 
