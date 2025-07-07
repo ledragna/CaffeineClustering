@@ -1,6 +1,6 @@
 #include "Utilities/boost_math_utilities.h"
 
-namespace SNS { namespace Utilities
+namespace CFF { namespace Utilities
 {
     QVector3D to_QVector3D(const Vector3d& p) {
         return QVector3D(p(0), p(1), p(2));

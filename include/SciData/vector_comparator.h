@@ -7,11 +7,11 @@
 /**
  * @author Andrea Salvadori and Marco Fusè
  */
-namespace SNS { namespace SciData
+namespace CFF { namespace SciData
 {
 
 	/**
-	 * @brief	Functor designed to be used with SNS::SciData::GridClusterer,
+	 * @brief	Functor designed to be used with CFF::SciData::GridClusterer,
 	 *			and in particular as "DistFunctor" template of the
 	 *			performClustering() method.
 	 */
@@ -33,26 +33,26 @@ namespace SNS { namespace SciData
 		 *			of vectors passed as parameter. The more the returned value
 		 *			is high, the more the two cluster are dissimilar.
 		 */
-		double operator()(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-						  const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
+		double operator()(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+						  const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
 
 	private:
 
-		double magnitudeComparator(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-								   const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		double distanceComparator(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-								  const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		double directionComparator(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-								   const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		double euclideanDirMagComparison(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-										 const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		double teleaDirMagComparison(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-									 const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		double teleaDirMagAsymmetric(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-									 const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		double volumeComparison(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1,
-								const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster2) const;
-		bool zeroValue(const SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster* cluster1) const;
+		double magnitudeComparator(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+								   const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		double distanceComparator(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+								  const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		double directionComparator(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+								   const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		double euclideanDirMagComparison(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+										 const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		double teleaDirMagComparison(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+									 const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		double teleaDirMagAsymmetric(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+									 const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		double volumeComparison(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1,
+								const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster2) const;
+		bool zeroValue(const CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster* cluster1) const;
 
 	};
 

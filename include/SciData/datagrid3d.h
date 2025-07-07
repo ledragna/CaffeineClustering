@@ -14,15 +14,15 @@
 #include <stdexcept>
 
 // Type aliases for easier migration
-using Vector3d = SNS::Utilities::Vector3d;
-using Vector4d = SNS::Utilities::Vector4d;
-using Matrix4d = SNS::Utilities::Matrix4d;
-using Vector3u = SNS::Utilities::Vector3u;
+using Vector3d = CFF::Utilities::Vector3d;
+using Vector4d = CFF::Utilities::Vector4d;
+using Matrix4d = CFF::Utilities::Matrix4d;
+using Vector3u = CFF::Utilities::Vector3u;
 
 /**
  * @author Andrea Salvadori
  */
-namespace SNS { namespace SciData
+namespace CFF { namespace SciData
 {
 	/**
 	 *	Instances of this class represent volumetric datasets
@@ -190,8 +190,8 @@ namespace SNS { namespace SciData
 			_nPoints[0] = nPointsX;
 			_nPoints[1] = nPointsY;
 			_nPoints[2] = nPointsZ;
-			_localToWorld = SNS::Utilities::identityMatrix4d();
-			_worldToLocal = SNS::Utilities::identityMatrix4d();
+			_localToWorld = CFF::Utilities::identityMatrix4d();
+			_worldToLocal = CFF::Utilities::identityMatrix4d();
 
 			_values.resize(nPointsX);
 			for(unsigned x = 0; x < nPointsX; x++)
@@ -235,8 +235,8 @@ namespace SNS { namespace SciData
 			// Clears the source
 			other._name.clear();
 			other._nPoints = {0,0,0};
-			other._localToWorld = SNS::Utilities::identityMatrix4d();
-			other._worldToLocal = SNS::Utilities::identityMatrix4d();
+			other._localToWorld = CFF::Utilities::identityMatrix4d();
+			other._worldToLocal = CFF::Utilities::identityMatrix4d();
 			other._values.clear();
 		}
 
@@ -274,8 +274,8 @@ namespace SNS { namespace SciData
 				// Clears the source
 				other._name.clear();
 				other._nPoints = {0,0,0};
-				other._localToWorld = SNS::Utilities::identityMatrix4d();
-				other._worldToLocal = SNS::Utilities::identityMatrix4d();
+				other._localToWorld = CFF::Utilities::identityMatrix4d();
+				other._worldToLocal = CFF::Utilities::identityMatrix4d();
 				other._values.clear();
 			}
 
@@ -320,7 +320,7 @@ namespace SNS { namespace SciData
 		 *			expressed in the global reference frame.
 		 */		virtual Vector3d getOriginInWorldSpace() const
 		{
-			return SNS::Utilities::xyz(SNS::Utilities::getColumn(_localToWorld,3));
+			return CFF::Utilities::xyz(CFF::Utilities::getColumn(_localToWorld,3));
 		}
 
 		/**
@@ -329,7 +329,7 @@ namespace SNS { namespace SciData
 		 */
 		virtual Vector3d getLocalXAxisInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,0);
+			return CFF::Utilities::getColumn(_localToWorld,0);
 		}
 
 		/**
@@ -338,7 +338,7 @@ namespace SNS { namespace SciData
 		 */
 		virtual Vector3d getLocalYAxisInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,1);
+			return CFF::Utilities::getColumn(_localToWorld,1);
 		}
 
 		/**
@@ -347,7 +347,7 @@ namespace SNS { namespace SciData
 		 */
 		virtual Vector3d getLocalZAxisInWorldSpace() const
 		{
-			return SNS::Utilities::getColumn(_localToWorld,2);
+			return CFF::Utilities::getColumn(_localToWorld,2);
 		}
 
 		/**
@@ -383,7 +383,7 @@ namespace SNS { namespace SciData
 		 */		virtual bool setLocalToWorldTransform(const Matrix4d& newLocalToWorld)
 		{
 			Matrix4d newWorldToLocal;
-			bool invertible = SNS::Utilities::InverseWithDeterminantCheck(newLocalToWorld, &newWorldToLocal);
+			bool invertible = CFF::Utilities::InverseWithDeterminantCheck(newLocalToWorld, &newWorldToLocal);
 			if(!invertible) return false;
 
 			_localToWorld = newLocalToWorld;
@@ -417,7 +417,7 @@ namespace SNS { namespace SciData
 											  const Vector3d& localYInWorld,
 											  const Vector3d& localZInWorld)
 		{
-			Matrix4d newLocalToWorld = SNS::Utilities::makeMatrix4d();
+			Matrix4d newLocalToWorld = CFF::Utilities::makeMatrix4d();
 			// Set columns of transformation matrix (Boost uses row-major order)
 			newLocalToWorld(0, 0) = localXInWorld(0); newLocalToWorld(0, 1) = localYInWorld(0); newLocalToWorld(0, 2) = localZInWorld(0); newLocalToWorld(0, 3) = worldOrigin(0);
 			newLocalToWorld(1, 0) = localXInWorld(1); newLocalToWorld(1, 1) = localYInWorld(1); newLocalToWorld(1, 2) = localZInWorld(1); newLocalToWorld(1, 3) = worldOrigin(1);
@@ -469,10 +469,10 @@ namespace SNS { namespace SciData
 											  double localZInWorld_1,
 											  double localZInWorld_2)
 		{			return this->setLocalToWorldTransform(
-				SNS::Utilities::makeVector3d(worldOrigin_0, worldOrigin_1, worldOrigin_2),
-				SNS::Utilities::makeVector3d(localXInWorld_0, localXInWorld_1, localXInWorld_2),
-				SNS::Utilities::makeVector3d(localYInWorld_0, localYInWorld_1, localYInWorld_2),
-				SNS::Utilities::makeVector3d(localZInWorld_0, localZInWorld_1, localZInWorld_2) );
+				CFF::Utilities::makeVector3d(worldOrigin_0, worldOrigin_1, worldOrigin_2),
+				CFF::Utilities::makeVector3d(localXInWorld_0, localXInWorld_1, localXInWorld_2),
+				CFF::Utilities::makeVector3d(localYInWorld_0, localYInWorld_1, localYInWorld_2),
+				CFF::Utilities::makeVector3d(localZInWorld_0, localZInWorld_1, localZInWorld_2) );
 		}
 
 		/**
@@ -497,14 +497,14 @@ namespace SNS { namespace SciData
 					"DataGrid3D::fromLocalToWorldFrame() : "
 					"Coordinates are out of bounds!"
 				);
-			}			Vector3d d_localCoords = SNS::Utilities::makeVector3d(localCoords(0),
+			}			Vector3d d_localCoords = CFF::Utilities::makeVector3d(localCoords(0),
 																 localCoords(1),
 																 localCoords(2));
 			// Convert to homogeneous coordinates (4D vector with w=1)
-			Vector4d homogeneous = SNS::Utilities::makeVector4d(d_localCoords(0), d_localCoords(1), d_localCoords(2), 1.0);
+			Vector4d homogeneous = CFF::Utilities::makeVector4d(d_localCoords(0), d_localCoords(1), d_localCoords(2), 1.0);
 			Vector4d result4d = boost::numeric::ublas::prod(_localToWorld, homogeneous);
 			// Extract 3D result
-			return SNS::Utilities::makeVector3d(result4d(0), result4d(1), result4d(2));
+			return CFF::Utilities::makeVector3d(result4d(0), result4d(1), result4d(2));
 		}
 
 		/**
@@ -523,7 +523,7 @@ namespace SNS { namespace SciData
 		 */		virtual Vector3d fromWorldToLocalFrame(
 						const Vector4d& worldCoordinates) const
 		{
-			return SNS::Utilities::xyz(SNS::Utilities::multiply(_worldToLocal, worldCoordinates));
+			return CFF::Utilities::xyz(CFF::Utilities::multiply(_worldToLocal, worldCoordinates));
 		}
 
 
@@ -919,22 +919,22 @@ namespace SNS { namespace SciData
 		// Specializations for boost vectors
 		static bool compareValues(const boost::numeric::ublas::vector<double>& v1, 
 								const boost::numeric::ublas::vector<double>& v2) {
-			return !SNS::Utilities::vectorsEqual(v1, v2);
+			return !CFF::Utilities::vectorsEqual(v1, v2);
 		}
 		
 		static void multiplyAssignValues(boost::numeric::ublas::vector<double>& v1, 
 										const boost::numeric::ublas::vector<double>& v2) {
-			SNS::Utilities::elementWiseMultiplyAssign(v1, v2);
+			CFF::Utilities::elementWiseMultiplyAssign(v1, v2);
 		}
 		
 		static bool compareValues(const boost::numeric::ublas::vector<unsigned int>& v1, 
 								const boost::numeric::ublas::vector<unsigned int>& v2) {
-			return !SNS::Utilities::vectorsEqual(v1, v2);
+			return !CFF::Utilities::vectorsEqual(v1, v2);
 		}
 		
 		static void multiplyAssignValues(boost::numeric::ublas::vector<unsigned int>& v1, 
 										const boost::numeric::ublas::vector<unsigned int>& v2) {
-			SNS::Utilities::elementWiseMultiplyAssign(v1, v2);
+			CFF::Utilities::elementWiseMultiplyAssign(v1, v2);
 		}
 	};
 

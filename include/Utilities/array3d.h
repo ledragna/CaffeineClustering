@@ -9,7 +9,7 @@
 /**
  * @author Andrea Salvadori
  */
-namespace SNS { namespace Utilities
+namespace CFF { namespace Utilities
 {
 
 /**

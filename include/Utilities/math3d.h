@@ -19,7 +19,7 @@ using Vector3d = boost::numeric::ublas::vector<double>;
 /**
  * @author Andrea Salvadori
  */
-namespace SNS { namespace Utilities
+namespace CFF { namespace Utilities
 {
 
 /**

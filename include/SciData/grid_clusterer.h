@@ -19,7 +19,7 @@
 /**
  * @author Andrea Salvadori and Marco Fusè
  */
-namespace SNS { namespace SciData
+namespace CFF { namespace SciData
 {
 	//TODO: doc
 	// T must support operator+(T,T) , operator*(double,T) and default constructor T()

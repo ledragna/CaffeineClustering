@@ -1,10 +1,10 @@
 #include "SciData/vector_comparator.h"
 
-using namespace SNS::SciData;
+using namespace CFF::SciData;
 
 typedef boost::numeric::ublas::vector<double> dvec3;
 typedef boost::numeric::ublas::matrix<double> dmat3;
-typedef SNS::SciData::GridClusterer<SNS::Utilities::Vector3d>::Cluster Cluster;
+typedef CFF::SciData::GridClusterer<CFF::Utilities::Vector3d>::Cluster Cluster;
 
 VectorComparator::VectorComparator(const VectorField3D* vecField)
 {
@@ -18,14 +18,14 @@ VectorComparator::VectorComparator(const VectorField3D* vecField)
 	for(uint x = 0; x < numPntX; ++x)
 		for(uint y = 0; y < numPntY; ++y)
 			for(uint z = 0; z < numPntZ; ++z)
-			{				dvec3 v = vecField->getValue(SNS::Utilities::makeVector3u(x,y,z));
-				double mag = SNS::Utilities::norm(v);
+			{				dvec3 v = vecField->getValue(CFF::Utilities::makeVector3u(x,y,z));
+				double mag = CFF::Utilities::norm(v);
 				_maxMagnitude = std::max(_maxMagnitude, mag);
 			}
 
-	dvec3 endpoint0 = vecField->fromLocalToWorldFrame(SNS::Utilities::makeVector3u(0,0,0));
-	dvec3 endpoint1 = vecField->fromLocalToWorldFrame(SNS::Utilities::makeVector3u(numPntX-1,numPntY-1,numPntZ-1));
-	_maxDist = SNS::Utilities::norm(endpoint1 - endpoint0);
+	dvec3 endpoint0 = vecField->fromLocalToWorldFrame(CFF::Utilities::makeVector3u(0,0,0));
+	dvec3 endpoint1 = vecField->fromLocalToWorldFrame(CFF::Utilities::makeVector3u(numPntX-1,numPntY-1,numPntZ-1));
+	_maxDist = CFF::Utilities::norm(endpoint1 - endpoint0);
 }
 
 double VectorComparator::operator()(const Cluster* cluster1, const Cluster* cluster2) const
@@ -45,21 +45,21 @@ bool VectorComparator::zeroValue(const Cluster* cluster1) const
 
 double VectorComparator::magnitudeComparator(const Cluster* cluster1, const Cluster* cluster2) const
 {
-	double magV1 = SNS::Utilities::norm(cluster1->Value);
-	double magV2 = SNS::Utilities::norm(cluster2->Value);
+	double magV1 = CFF::Utilities::norm(cluster1->Value);
+	double magV2 = CFF::Utilities::norm(cluster2->Value);
 	double res = std::abs(magV2 - magV1) / _maxMagnitude;
 	return res;
 }
 
 double VectorComparator::distanceComparator(const Cluster* cluster1, const Cluster* cluster2) const
 {
-	return SNS::Utilities::norm(cluster1->Centroid - cluster2->Centroid) / _maxDist;
+	return CFF::Utilities::norm(cluster1->Centroid - cluster2->Centroid) / _maxDist;
 }
 
 double VectorComparator::directionComparator(const Cluster* cluster1, const Cluster* cluster2) const
 {
-	double cosAlpha = SNS::Utilities::dot(cluster1->Value, cluster2->Value) /
-									   (SNS::Utilities::norm(cluster1->Value) * SNS::Utilities::norm(cluster2->Value));
+	double cosAlpha = CFF::Utilities::dot(cluster1->Value, cluster2->Value) /
+									   (CFF::Utilities::norm(cluster1->Value) * CFF::Utilities::norm(cluster2->Value));
 	return 0.5 * (1.0 - cosAlpha);
 }
 
@@ -67,7 +67,7 @@ double VectorComparator::euclideanDirMagComparison(const Cluster* cluster1, cons
 {
 	dvec3 v1 = cluster1->Value;
 	dvec3 v2 = cluster2->Value;
-	return SNS::Utilities::norm(v2-v1) / std::min(SNS::Utilities::norm(v1), SNS::Utilities::norm(v2));
+	return CFF::Utilities::norm(v2-v1) / std::min(CFF::Utilities::norm(v1), CFF::Utilities::norm(v2));
 }
 
 double VectorComparator::teleaDirMagComparison(const Cluster* cluster1, const Cluster* cluster2) const
@@ -87,7 +87,7 @@ double VectorComparator::teleaDirMagAsymmetric(const Cluster* cluster1, const Cl
 	dvec3 Xv = V1;
 	// Computes 2 vectors orthogonal to Xv
 	dvec3 Yv, Zv;
-	SNS::Utilities::findOrthonormalBasis(Xv,Yv,Zv); //Note: it also cares to normalize Xv!
+	CFF::Utilities::findOrthonormalBasis(Xv,Yv,Zv); //Note: it also cares to normalize Xv!
 	
 	// Create a 3x3 matrix for change of basis
 	dmat3 T(3, 3);
@@ -107,7 +107,7 @@ double VectorComparator::teleaDirMagAsymmetric(const Cluster* cluster1, const Cl
 
 	/* Error computation */
 
-	double v1_len = SNS::Utilities::norm(V1);
+	double v1_len = CFF::Utilities::norm(V1);
 
 	// Params of the elliptic similarity function and their squared value
 	double a = 0.5  * v1_len; // Radius of the ellipse along the V1 direction (Xv)

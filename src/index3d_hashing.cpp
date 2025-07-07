@@ -1,7 +1,7 @@
 #include "Utilities/index3d_hashing.h"
 #include <functional>
 
-using namespace SNS::Utilities;
+using namespace CFF::Utilities;
 
 size_t Index3DHasher::operator()(std::array<unsigned,3> p) const
 {

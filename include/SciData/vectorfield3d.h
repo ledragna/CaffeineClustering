@@ -7,13 +7,13 @@
 /**
  * @author Andrea Salvadori
  */
-namespace SNS  { namespace SciData
+namespace CFF  { namespace SciData
 {
 	/**
 	 * @brief Uniform 3D grid of 3D vectors.
-	 *		  See the documentation of the SNS::SciData::DataGrid3D class for details.
+	 *		  See the documentation of the CFF::SciData::DataGrid3D class for details.
 	 */
-	typedef DataGrid3D<SNS::Utilities::Vector3d> VectorField3D;
+	typedef DataGrid3D<CFF::Utilities::Vector3d> VectorField3D;
 
 	typedef std::shared_ptr<VectorField3D> VectorField3DSP;
 	typedef std::shared_ptr<const VectorField3D> ConstVectorField3DSP;

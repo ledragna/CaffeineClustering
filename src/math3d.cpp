@@ -9,14 +9,14 @@
 #include <Utilities/boost_math_utilities.h>
 
 // Using declarations for convenience
-using SNS::Utilities::Vector3d;
-using SNS::Utilities::makeVector3d;
-using SNS::Utilities::normalize;
-using SNS::Utilities::cross;
-using SNS::Utilities::dot;
-using SNS::Utilities::fuzzyEqual;
+using CFF::Utilities::Vector3d;
+using CFF::Utilities::makeVector3d;
+using CFF::Utilities::normalize;
+using CFF::Utilities::cross;
+using CFF::Utilities::dot;
+using CFF::Utilities::fuzzyEqual;
 
-QColor SNS::Utilities::mixQColors(double t,
+QColor CFF::Utilities::mixQColors(double t,
 										const QColor& startColor,
 										const QColor& endColor)
 {
@@ -33,7 +33,7 @@ QColor SNS::Utilities::mixQColors(double t,
 
 
 
-QVector3D SNS::Utilities::BSplinePoint(const QVector3D controlPoints[], float t)
+QVector3D CFF::Utilities::BSplinePoint(const QVector3D controlPoints[], float t)
 {
 	// Cubic B-Spline equation:
 	// P(t) = [ t^3  t^2  t  1 ] * M * C
@@ -63,7 +63,7 @@ QVector3D SNS::Utilities::BSplinePoint(const QVector3D controlPoints[], float t)
 
 // Return nsegments + 1 points
 // nsegments must be > 0
-void SNS::Utilities::BSplinePath(const QVector3D controlPoints[],
+void CFF::Utilities::BSplinePath(const QVector3D controlPoints[],
 									   unsigned int nsegments,
 									   QVector<QVector3D> &outResult)
 {
@@ -103,7 +103,7 @@ void SNS::Utilities::BSplinePath(const QVector3D controlPoints[],
 }
 
 
-bool SNS::Utilities::rayAABBIntersection( const Vector3d& rayOrigin,
+bool CFF::Utilities::rayAABBIntersection( const Vector3d& rayOrigin,
 												const Vector3d& rayDir,
 												const Vector3d& aabbMinXYZ,
 												const Vector3d& aabbMaxXYZ,
@@ -150,7 +150,7 @@ bool SNS::Utilities::rayAABBIntersection( const Vector3d& rayOrigin,
 }
 
 
-bool SNS::Utilities::rayPlaneIntersection(const Vector3d& rayOrigin,
+bool CFF::Utilities::rayPlaneIntersection(const Vector3d& rayOrigin,
 												const Vector3d& rayDir,
 												const Vector3d& planePoint,
 												const Vector3d& planeNormal,
@@ -167,7 +167,7 @@ bool SNS::Utilities::rayPlaneIntersection(const Vector3d& rayOrigin,
 	return true;
 }
 
-bool SNS::Utilities::rayPlaneIntersection(const QVector3D& rayOrigin,
+bool CFF::Utilities::rayPlaneIntersection(const QVector3D& rayOrigin,
 										  const QVector3D& rayDir,
 										  const QVector3D& planePoint,
 										  const QVector3D& planeNormal,
@@ -184,7 +184,7 @@ bool SNS::Utilities::rayPlaneIntersection(const QVector3D& rayOrigin,
 }
 
 
-void SNS::Utilities::findOrthonormalBasis(QVector3D& inoutPseudoZ,
+void CFF::Utilities::findOrthonormalBasis(QVector3D& inoutPseudoZ,
 										  QVector3D& outPseudoY,
 										  QVector3D& outPseudoX)
 {
@@ -215,7 +215,7 @@ void SNS::Utilities::findOrthonormalBasis(QVector3D& inoutPseudoZ,
 	outPseudoX = v3;
 }
 
-void SNS::Utilities::findOrthonormalBasis(Vector3d& inoutPseudoZ,
+void CFF::Utilities::findOrthonormalBasis(Vector3d& inoutPseudoZ,
 										  Vector3d& outPseudoY,
 										  Vector3d& outPseudoX)
 {
@@ -248,7 +248,7 @@ void SNS::Utilities::findOrthonormalBasis(Vector3d& inoutPseudoZ,
 
 
 
-QVector3D SNS::Utilities::unproject(const QVector3D& windowCoords,
+QVector3D CFF::Utilities::unproject(const QVector3D& windowCoords,
 									const QRectF& viewPort,
 									const QMatrix4x4& MP)
 {
@@ -270,7 +270,7 @@ QVector3D SNS::Utilities::unproject(const QVector3D& windowCoords,
 
 
 
-SNS::Utilities::AxesSimilarity SNS::Utilities::computeGlobalAxesSimilarity(
+CFF::Utilities::AxesSimilarity CFF::Utilities::computeGlobalAxesSimilarity(
 														const QVector3D& v1,
 														const QVector3D& v2,
 														const QVector3D& v3)
@@ -369,7 +369,7 @@ SNS::Utilities::AxesSimilarity SNS::Utilities::computeGlobalAxesSimilarity(
 
 
 
-bool SNS::Utilities::closestPointsBetweenLines(const QVector3D& ray1Origin,
+bool CFF::Utilities::closestPointsBetweenLines(const QVector3D& ray1Origin,
 											   const QVector3D& ray1Dir,
 											   const QVector3D& ray2Origin,
 											   const QVector3D& ray2Dir,

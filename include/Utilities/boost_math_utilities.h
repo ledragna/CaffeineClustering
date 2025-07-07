@@ -13,7 +13,7 @@
 
 #include <Utilities/floating_point.h>
 
-namespace SNS { namespace Utilities
+namespace CFF { namespace Utilities
 {
     // Type aliases for convenience
     using Vector3d = boost::numeric::ublas::vector<double>;
@@ -137,7 +137,7 @@ namespace SNS { namespace Utilities
     bool fuzzyEqual(const T& a, const T& b, double epsilon = 1e-4) {
         if (a.size() != b.size()) return false;
         for (size_t i = 0; i < a.size(); ++i) {
-            if (!SNS::Utilities::fuzzyEqual(a(i), b(i), epsilon)) {
+            if (!CFF::Utilities::fuzzyEqual(a(i), b(i), epsilon)) {
                 return false;
             }
         }
@@ -153,7 +153,7 @@ namespace SNS { namespace Utilities
         }
         for (size_t i = 0; i < m1.size1(); ++i) {
             for (size_t j = 0; j < m1.size2(); ++j) {
-                if (!SNS::Utilities::fuzzyEqual(m1(i, j), m2(i, j), epsilon)) {
+                if (!CFF::Utilities::fuzzyEqual(m1(i, j), m2(i, j), epsilon)) {
                     return false;
                 }
             }
@@ -168,7 +168,7 @@ namespace SNS { namespace Utilities
         if (v1.size() != v2.size()) return false;
         for (size_t i = 0; i < v1.size(); ++i) {
             if constexpr (std::is_floating_point_v<T>) {
-                if (!SNS::Utilities::fuzzyEqual(v1(i), v2(i))) return false;
+                if (!CFF::Utilities::fuzzyEqual(v1(i), v2(i))) return false;
             } else {
                 if (v1(i) != v2(i)) return false;
             }

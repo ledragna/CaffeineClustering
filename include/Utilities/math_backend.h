@@ -6,21 +6,21 @@
 
 #include <Utilities/boost_math_utilities.h>
 
-namespace SNS { namespace Math {
+namespace CFF { namespace Math {
     // Type aliases for unified interface
-    using Vector3d = SNS::Utilities::Vector3d;
-    using Vector4d = SNS::Utilities::Vector4d;
-    using Matrix3d = SNS::Utilities::Matrix3d;
-    using Matrix4d = SNS::Utilities::Matrix4d;
+    using Vector3d = CFF::Utilities::Vector3d;
+    using Vector4d = CFF::Utilities::Vector4d;
+    using Matrix3d = CFF::Utilities::Matrix3d;
+    using Matrix4d = CFF::Utilities::Matrix4d;
     using Vector3u = boost::numeric::ublas::vector<unsigned int>;
     
     // Helper functions
     inline Vector3d makeVector3d(double x, double y, double z) {
-        return SNS::Utilities::makeVector3d(x, y, z);
+        return CFF::Utilities::makeVector3d(x, y, z);
     }
     
     inline Vector4d makeVector4d(double x, double y, double z, double w) {
-        return SNS::Utilities::makeVector4d(x, y, z, w);
+        return CFF::Utilities::makeVector4d(x, y, z, w);
     }
     
     inline Vector3u makeVector3u(unsigned int x, unsigned int y, unsigned int z) {
@@ -30,24 +30,24 @@ namespace SNS { namespace Math {
     }
     
     inline Matrix4d identityMatrix4d() {
-        return SNS::Utilities::identityMatrix4d();
+        return CFF::Utilities::identityMatrix4d();
     }
     
     // Mathematical operations
     inline double dot(const Vector3d& a, const Vector3d& b) {
-        return SNS::Utilities::dot(a, b);
+        return CFF::Utilities::dot(a, b);
     }
     
     inline Vector3d cross(const Vector3d& a, const Vector3d& b) {
-        return SNS::Utilities::cross(a, b);
+        return CFF::Utilities::cross(a, b);
     }
     
     inline double norm(const Vector3d& v) {
-        return SNS::Utilities::norm(v);
+        return CFF::Utilities::norm(v);
     }
     
     inline Vector3d normalize(const Vector3d& v) {
-        return SNS::Utilities::normalize(v);
+        return CFF::Utilities::normalize(v);
     }
     
     // Access elements

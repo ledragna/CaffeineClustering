@@ -10,7 +10,7 @@
 /**
  * @author Andrea Salvadori and Marco Fusè
  */
-namespace SNS { namespace SciData
+namespace CFF { namespace SciData
 {
 
 // TODO: doc
@@ -23,7 +23,7 @@ private:
 
 	struct GridCoordsHasher
 	{
-		size_t operator()(SNS::Utilities::Vector3u p) const
+		size_t operator()(CFF::Utilities::Vector3u p) const
 		{
 			// Computes an esh table for the voxel's coordinates
 			// using the "prime number multiplication" algorithm.
@@ -45,21 +45,21 @@ private:
 	};
 
 	struct GridCoordsComparator
-	{		bool operator()(const SNS::Utilities::Vector3u& p1,
-						const SNS::Utilities::Vector3u& p2) const
+	{		bool operator()(const CFF::Utilities::Vector3u& p1,
+						const CFF::Utilities::Vector3u& p2) const
 		{
 			return (p1(0) == p2(0)) && (p1(1) == p2(1)) && (p1(2) == p2(2));
 		}
 	};
 
 	struct Cluster
-	{		SNS::Utilities::Vector3d Centroid;
-		SNS::Utilities::Vector3d Vector;
+	{		CFF::Utilities::Vector3d Centroid;
+		CFF::Utilities::Vector3d Vector;
 		double Volume;
-		std::unordered_set< SNS::Utilities::Vector3u,
+		std::unordered_set< CFF::Utilities::Vector3u,
 							GridCoordsHasher,
 							GridCoordsComparator > Voxels;
-		std::unordered_set< SNS::Utilities::Vector3u,
+		std::unordered_set< CFF::Utilities::Vector3u,
 							GridCoordsHasher,
 							GridCoordsComparator > Neighbours;
 		size_t Level;
@@ -74,31 +74,31 @@ private:
 private:
 
 	ClusterSP mergeClusters(ClusterSP c1, ClusterSP c2, size_t level);
-	double computeDirMagError(const SNS::Utilities::Vector3d& V1,
-							  const SNS::Utilities::Vector3d& V2);
+	double computeDirMagError(const CFF::Utilities::Vector3d& V1,
+							  const CFF::Utilities::Vector3d& V2);
 
 	// Returns 0 when P1 == P2 and "err_max" when len(P2-P1) = max_distance.
 	// Otherwise returns the linear iterpolation between these two values.
-	double computePosError_Version1(const SNS::Utilities::Vector3d& P1,
-									const SNS::Utilities::Vector3d& P2,
+	double computePosError_Version1(const CFF::Utilities::Vector3d& P1,
+									const CFF::Utilities::Vector3d& P2,
 									double max_distance, double err_max);
 	// Returns 1 when P1 == P2 and "err_max" when len(P2-P1) = max_distance.
 	// Otherwise returns the linear iterpolation between these two values.
-	double computePosError_Version2(const SNS::Utilities::Vector3d& P1,
-									const SNS::Utilities::Vector3d& P2,
+	double computePosError_Version2(const CFF::Utilities::Vector3d& P1,
+									const CFF::Utilities::Vector3d& P2,
 									double max_distance, double err_max);
 
-	double computeError_Version1(const SNS::Utilities::Vector3d& V1,
-								 const SNS::Utilities::Vector3d& P1,
-								 const SNS::Utilities::Vector3d& V2,
-								 const SNS::Utilities::Vector3d& P2,
+	double computeError_Version1(const CFF::Utilities::Vector3d& V1,
+								 const CFF::Utilities::Vector3d& P1,
+								 const CFF::Utilities::Vector3d& V2,
+								 const CFF::Utilities::Vector3d& P2,
 								 double max_distance, double pos_err_max,
 								 double weight);
 
-	double computeError_Version2(const SNS::Utilities::Vector3d& V1,
-								 const SNS::Utilities::Vector3d& P1,
-								 const SNS::Utilities::Vector3d& V2,
-								 const SNS::Utilities::Vector3d& P2,
+	double computeError_Version2(const CFF::Utilities::Vector3d& V1,
+								 const CFF::Utilities::Vector3d& P1,
+								 const CFF::Utilities::Vector3d& V2,
+								 const CFF::Utilities::Vector3d& P2,
 								 double max_distance, double pos_err_max);
 
 	ClusterSP performClustering(ConstVectorField3DSP grid);
