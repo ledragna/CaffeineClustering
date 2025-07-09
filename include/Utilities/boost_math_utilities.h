@@ -7,10 +7,6 @@
 #include <boost/numeric/ublas/operation.hpp>
 #include <type_traits>
 
-#include <QVector3D>
-#include <QVector4D>
-#include <QMatrix4x4>
-
 #include <Utilities/floating_point.h>
 
 namespace CFF { namespace Utilities
@@ -110,27 +106,19 @@ namespace CFF { namespace Utilities
         // For simplicity, we'll use a basic 4x4 matrix inversion
         // In production code, you might want to use a more robust library
         try {
-            *result = boost::numeric::ublas::zero_matrix<double>(4, 4);
-            // This is a placeholder - would need proper matrix inversion implementation
-            // For now, just return identity matrix
-            for (int i = 0; i < 4; ++i) {
-                (*result)(i, i) = 1.0;
+            if (result) {
+                *result = boost::numeric::ublas::zero_matrix<double>(4, 4);
+                // This is a placeholder - would need proper matrix inversion implementation
+                // For now, just return identity matrix
+                for (int i = 0; i < 4; ++i) {
+                    (*result)(i, i) = 1.0;
+                }
             }
             return true;  // Assume invertible for now
         } catch (...) {
             return false;
         }
     }
-    
-    // Conversion functions to Qt types
-    QVector3D to_QVector3D(const Vector3d& p);
-    QVector4D to_QVector4D(const Vector4d& p);
-    QMatrix4x4 to_QMatrix4x4(const Matrix4d& mat);
-    
-    // Conversion functions from Qt types
-    Vector3d to_Boost_Vector3d(const QVector3D& p);
-    Vector4d to_Boost_Vector4d(const QVector4D& p);
-    Matrix4d to_Boost_Matrix4d(const QMatrix4x4& mat);
     
     // Matrix/vector fuzzy comparison
     template<typename T>

@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 REQUIRED COMPONENTS Core Gui)
 
 # Find Boost (required)
 find_package(Boost REQUIRED)
@@ -64,7 +63,7 @@ set(HEADERS
 
 # Create static library
 add_library(clustering_lib STATIC ${SOURCES} ${HEADERS})
-target_link_libraries(clustering_lib Qt5::Core Qt5::Gui)
+# No external library linking needed for clustering_lib
 
 # Example executable
 add_executable(clustering_example examples/example_usage.cpp)

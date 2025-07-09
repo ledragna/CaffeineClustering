@@ -1,8 +1,8 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include <QString>
 #include <iostream>
+#include <string>
 
 /**
  * @author Andrea Salvadori
@@ -20,10 +20,10 @@ namespace CFF { namespace Utilities
  *                      Must have a constructor accepting an std::string as parameter.
  */
 template<typename ExceptionType>
-void throwAndPrintError(const QString& errorMessage)
+void throwAndPrintError(const std::string& errorMessage)
 {
-	std::cerr << errorMessage.toStdString() << std::endl;
-	throw ExceptionType(errorMessage.toStdString());
+	std::cerr << errorMessage << std::endl;
+	throw ExceptionType(errorMessage);
 }
 
 } }

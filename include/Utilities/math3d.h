@@ -3,10 +3,7 @@
 
 #include <vector>
 #include <array>
-
-#include <QColor>
-#include <QVector3D>
-#include <QVector>
+#include <algorithm>
 
 #include <boost/numeric/ublas/vector.hpp>
 
@@ -21,55 +18,6 @@ using Vector3d = boost::numeric::ublas::vector<double>;
  */
 namespace CFF { namespace Utilities
 {
-
-/**
- * @brief   Linearly interpolates between the two colors passed as parameter.
- *
- *          In particular, the resulting color is computed as:
- *          finalColor = (t * endColor) + ((1 - t) * startColor)
- *
- *          The parameter t must be in the range [0,1].
- */
-QColor mixQColors(double t, const QColor& startColor, const QColor& endColor);
-
-
-/**
- * @brief   Computes the coordinates of a point lying on a B-Spline curve.
- *
- *          The curve is defined by means of four control points (to be passed as parameters).
- *          The resulting curve is an approximation of the trait controlPoints[1]->controlPoints[2],
- *          while controlPoints[0] and controlPoints[3] control the shape of the curve.
- *
- *          The position of the point on the spline is expressed by means of a real parameter "t"
- *          in the range [0,1].
- *
- * @param controlPoints The four control points which define the B-Spline.
- *
- * @param t A real parameter which defines the position of the point on the curve.
- *          Should be in the range [0, 1].
- *
- * @return The coordinates of the point "t" lying on the B-Spline defined by controlPoints.
- */
-QVector3D BSplinePoint(const QVector3D controlPoints[4], float t);
-
-
-/**
- * @brief   Computes the coordinates of n+1 equally spaced points lying on a B-Spline curve.
- *
- *          This method logically subdivide the curve in n segments and returns the
- *          corresponding n+1 endpoints.
- *
- *          The curve is defined by means of four control points (to be passed as parameters).
- *          The resulting curve is an approximation of the trait controlPoints[1]->controlPoints[2],
- *          while controlPoints[0] and controlPoints[3] control the shape of the curve.
- *
- * @param controlPoints The four control points which define the B-Spline.
- *
- * @param nsegments The number of sebments in which the B-Spline must be subdivided. Must be > 0.
- *
- * @param outResult [Output parameter] Vector in which the nsegments+1 resulting points will be inserted.
- */
-void BSplinePath(const QVector3D controlPoints[4], unsigned int nsegments, QVector<QVector3D>& outResult);
 
 
 
@@ -104,17 +52,13 @@ struct AxesSimilarity
 
 
 
-/**
- * @brief	Given 3 linearly indipendent vectors, this function computes
+/** * @brief	Given 3 linearly indipendent vectors, this function computes
  *			an association between these vectors and the 3 axes of the
  *			global reference frame, by searching for each axis the vector
  *			who have the direction more "similar" to the considered axis.
  *
  * @return An AxesSimilarity structure encoding the computed association.
  */
-AxesSimilarity computeGlobalAxesSimilarity(	const QVector3D& v1,
-											const QVector3D& v2,
-											const QVector3D& v3);
 
 /**
  * @brief	Given an input vector "inoutPseudoZ" in the 3D space, this function
@@ -124,9 +68,6 @@ AxesSimilarity computeGlobalAxesSimilarity(	const QVector3D& v1,
  *
  * @throw std::invalid_argument If inoutVector1 is a null vector.
  */
-void findOrthonormalBasis(QVector3D& inoutPseudoZ,
-						  QVector3D& outPseudoY,
-						  QVector3D& outPseudoX);
 
 /**
  * @brief	Given an input vector "inoutPseudoZ" in the 3D space, this function
@@ -161,12 +102,8 @@ void findOrthonormalBasis(Vector3d& inoutPseudoZ,
  *
  * @param MP	Can be a projecton matrix, a view-projection matrix or a
  *				model-view-projection matrix.
- *
- * @return A point in the 3D space corresponding to the provided window coordinates.
+ * * @return A point in the 3D space corresponding to the provided window coordinates.
  */
-QVector3D unproject(const QVector3D& windowCoords,
-					const QRectF& viewPort,
-					const QMatrix4x4& MP);
 
 
 /**
@@ -247,9 +184,9 @@ template<typename T>
 T trilinearInterpolation(const std::array<T,8>& cubeValues,
 						 const Vector3d& normCoords)
 {	// Clamps the provided coordinates in the range [0,1]
-	double normCoordsX = qBound(0.0, normCoords(0), 1.0);
-	double normCoordsY = qBound(0.0, normCoords(1), 1.0);
-	double normCoordsZ = qBound(0.0, normCoords(2), 1.0);
+	double normCoordsX = std::min(1.0, std::max(0.0, normCoords(0)));
+	double normCoordsY = std::min(1.0, std::max(0.0, normCoords(1)));
+	double normCoordsZ = std::min(1.0, std::max(0.0, normCoords(2)));
 
 	// Little optimization: precomputes 1-normCoordsX/Y/Z
 	double normCoordsNegX = 1.0-normCoordsX;
@@ -312,68 +249,7 @@ T trilinearInterpolation(const std::array<T,8>& cubeValues,
  *
  * @return	Returns true if the ray intersects the plane, false otherwise.
  */
-bool rayPlaneIntersection(	const QVector3D& rayOrigin,
-							const QVector3D& rayDir,
-							const QVector3D& planePoint,
-							const QVector3D& planeNormal,
-							float& out_t);
 
-
-/**
- * @brief	Computes the closest point between two lines.
- *
- *			In particular, let's consider two lines with equation:
- *			P = ray1Origin + [t1 * ray1Dir];
- *			Q = ray2Origin + [t2 * ray2Dir];
- *			where "ray1Origin" and "ray2Origin" are points lying on the two
- *			lines, "ray1Dir" and "ray2Dir" are the direction of the lines,
- *			t1 and t2 are scalar parameters and P/Q are the points on the two
- *			lines corresponding to a specific value of t1 and t2.
- *			This function computes the values of t1 and t2 in which the distance
- *			between the two lines is minimum.
- *			The related point can the be computed with the equations presented above.
- *
- *			The implementation is based on the algorithm presented in the book:
- *			"Essential Mathematics for Games and Interactive Applications",
- *			Second edition, by James M. Van Verth and Lars M. Bishop.
- *			Morgan Kaufmann, 2008. Pag. 548-550
- *
- * @param ray1Origin	The coordinates of a point lying on the first line.
- * @param ray2Origin	The coordinates of a point lying on the second line.
- *
- * @param ray1Dir		The direction of the first line. May or may not have
- *						unit lenght. The resulting values of "t1" will depend
- *						on the lenght of such vector.
- *
- * @param ray2Dir		The direction of the second line. May or may not have
- *						unit lenght. The resulting values of "t2" will depend
- *						on the lenght of such vector.
- *
- * @param out_t1		Optional output parameter. In the case of success,
- *						will contain the value of "t1" for the point on the
- *						first line which is closest to the second line.
- *						If the two lines are (almost) parallel, out_t1 will
- *						be set to 0.
- *						You can pass NULL if you are not interested to this result.
- *
- * @param out_t2		Optional output parameter. In the case of success,
- *						will contain the value of "t2" for the point on the
- *						second line which is closest to the first line.
- *						If the two lines are (almost) parallel, out_t2 will
- *						be set to 0.
- *						You can pass NULL if you are not interested to this result.
- *
- * @return	Returns true if the computation succeeds, false otherwise.
- *
- * @see		"Essential Mathematics for Games and Interactive Applications",
- *			Second edition, by James M. Van Verth and Lars M. Bishop.
- *			Morgan Kaufmann, 2008. Pag. 548-550
- */
-bool closestPointsBetweenLines(	const QVector3D& ray1Origin,
-								const QVector3D& ray1Dir,
-								const QVector3D& ray2Origin,
-								const QVector3D& ray2Dir,
-								float* out_t1, float* out_t2);
 
 /**
  * @brief	Computes the intersection between a ray and a plane.

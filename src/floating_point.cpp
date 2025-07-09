@@ -108,55 +108,5 @@ bool CFF::Utilities::fuzzyEqualOrGreaterThan(const float& x, const float& y)
 	return fuzzyEqualOrGreaterThan(x,y,1e-4f);
 }
 
-bool CFF::Utilities::fuzzyEqual(const QVector3D& v1,
-									  const QVector3D& v2,
-									  float epsilon)
-{
-	return	fuzzyEqual(v1.x(), v2.x(), epsilon) &&
-			fuzzyEqual(v1.y(), v2.y(), epsilon) &&
-			fuzzyEqual(v1.z(), v2.z(), epsilon);
-}
-
-bool CFF::Utilities::fuzzyEqual(const QVector3D& v1, const QVector3D& v2)
-{
-	return	fuzzyEqual(v1.x(), v2.x(), 1e-4f) &&
-			fuzzyEqual(v1.y(), v2.y(), 1e-4f) &&
-			fuzzyEqual(v1.z(), v2.z(), 1e-4f);
-}
-
-bool CFF::Utilities::fuzzyEqual(const QVector4D& v1,
-								const QVector4D& v2,
-								float epsilon)
-{
-	return	fuzzyEqual(v1.x(), v2.x(), epsilon) &&
-			fuzzyEqual(v1.y(), v2.y(), epsilon) &&
-			fuzzyEqual(v1.z(), v2.z(), epsilon) &&
-			fuzzyEqual(v1.w(), v2.w(), epsilon);
-}
-
-bool CFF::Utilities::fuzzyEqual(const QVector4D& v1, const QVector4D& v2)
-{
-	return	fuzzyEqual(v1.x(), v2.x(), 1e-4f) &&
-			fuzzyEqual(v1.y(), v2.y(), 1e-4f) &&
-			fuzzyEqual(v1.z(), v2.z(), 1e-4f) &&
-			fuzzyEqual(v1.w(), v2.w(), 1e-4f);
-}
-
-
-bool CFF::Utilities::fuzzyEqual(const QMatrix4x4& m1,
-								const QMatrix4x4& m2,
-								float epsilon)
-{
-	bool equals = true;
-	for(int i = 0; (i < 4) && equals; ++i)
-		for(int j = 0; (j < 4) && equals; ++j)
-			equals = equals &&
-					 CFF::Utilities::fuzzyEqual(m1(i,j), m2(i,j), epsilon);
-
-	return equals;
-}
-
-bool CFF::Utilities::fuzzyEqual(const QMatrix4x4& m1, const QMatrix4x4& m2)
-{
-	return CFF::Utilities::fuzzyEqual(m1, m2, 1e-4f);
-}
+// Note: Qt-specific vector and matrix comparison functions have been removed.
+// The library now uses only standard C++ and Boost types.

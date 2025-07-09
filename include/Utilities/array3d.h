@@ -2,7 +2,6 @@
 #define ARRAY3D_H
 
 #include <stdexcept>
-#include <QDebug>
 
 #include <Utilities/log.h>
 

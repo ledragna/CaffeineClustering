@@ -8,6 +8,7 @@
 #include <stack>
 #include <vector>
 #include <functional>
+#include <map>
 
 #include <SciData/vectorfield3d.h>
 #include <Utilities/array3d.h>

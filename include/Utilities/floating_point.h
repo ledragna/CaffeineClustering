@@ -1,10 +1,6 @@
 #ifndef FLOATING_POINT_H
 #define FLOATING_POINT_H
 
-#include <QVector3D>
-#include <QVector4D>
-#include <QMatrix4x4>
-
 /**
  * @author Andrea Salvadori
  */
@@ -25,38 +21,6 @@ bool fuzzyEqual(double x, double y, double epsilon);
 bool fuzzyEqual(const double& x, const double& y); // const T& has been used to work with template stuff
 bool fuzzyEqual(float x, float y, float epsilon);
 bool fuzzyEqual(const float& x, const float& y); // const T& has been used to work with template stuff
-///!@}
-
-
-/**
- * @brief	Compares two QVectors3D or QVectors4D for equality.
- *			In particular, v1 and v2 are considered equals if the relative
- *			differerence between each pair of components is smaller than a
- *			epsilon. The default value for epsilon is 1e-4.
- *
- * @note    For details see:
- *			http://www.boost.org/doc/libs/1_59_0/libs/test/doc/html/boost_test/testing_tools/extended_comparison/floating_point/floating_points_comparison_theory.html
- */
-///@{
-bool fuzzyEqual(const QVector3D& v1, const QVector3D& v2, float epsilon);
-bool fuzzyEqual(const QVector3D& v1, const QVector3D& v2);
-bool fuzzyEqual(const QVector4D& v1, const QVector4D& v2, float epsilon);
-bool fuzzyEqual(const QVector4D& v1, const QVector4D& v2);
-///!@}
-
-
-/**
- * @brief	Compares two QMatrix4x4 for equality.
- *			In particular, m1 and m2 are considered equals if the relative
- *			differerence between their elements is smaller than a epsilon.
- *			The default value for epsilon is 1e-4.
- *
- * @note    For details see:
- *			http://www.boost.org/doc/libs/1_59_0/libs/test/doc/html/boost_test/testing_tools/extended_comparison/floating_point/floating_points_comparison_theory.html
- */
-///@{
-bool fuzzyEqual(const QMatrix4x4& m1, const QMatrix4x4& m2, float epsilon);
-bool fuzzyEqual(const QMatrix4x4& m1, const QMatrix4x4& m2);
 ///!@}
 
 
