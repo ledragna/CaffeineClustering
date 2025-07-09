@@ -22,16 +22,16 @@ public:
 private:
 
 	struct GridCoordsHasher
-	{
-		size_t operator()(CFF::Utilities::Vector3u p) const
+	{		size_t operator()(CFF::Utilities::Vector3u p) const
 		{
 			// Computes an esh table for the voxel's coordinates
 			// using the "prime number multiplication" algorithm.
 			// See: https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/builder/HashCodeBuilder.html
 			// See: http://myeyesareblind.com/2017/02/06/Combine-hash-values/
-
 			const size_t k1 = 13; // must be a prime number
-			const size_t k2 = 71; // must be a prime number			size_t hx = std::hash<uint>()(p(0));
+			const size_t k2 = 71; // must be a prime number
+			
+			size_t hx = std::hash<uint>()(p(0));
 			size_t hy = std::hash<uint>()(p(1));
 			size_t hz = std::hash<uint>()(p(2));
 
@@ -43,17 +43,17 @@ private:
 			return hash;
 		}
 	};
-
 	struct GridCoordsComparator
-	{		bool operator()(const CFF::Utilities::Vector3u& p1,
+	{
+		bool operator()(const CFF::Utilities::Vector3u& p1,
 						const CFF::Utilities::Vector3u& p2) const
 		{
 			return (p1(0) == p2(0)) && (p1(1) == p2(1)) && (p1(2) == p2(2));
 		}
 	};
-
 	struct Cluster
-	{		CFF::Utilities::Vector3d Centroid;
+	{
+		CFF::Utilities::Vector3d Centroid;
 		CFF::Utilities::Vector3d Vector;
 		double Volume;
 		std::unordered_set< CFF::Utilities::Vector3u,

@@ -53,13 +53,15 @@ namespace CFF { namespace SciData
 			std::shared_ptr<Cluster> RightChild;
 			std::shared_ptr<Cluster> LeftChild;
 			std::unordered_set<Cluster*> Neighbours;
-			/**************************************/
-
-			/* Default constructor */
+			/**************************************/			/* Default constructor */
 			Cluster()
-				: Centroid(0,0,0), Value(T()),
+				: Centroid(3), Value(T()),
 				  Clustered(false), ErrorLevel(0), Volume(1)
-			{}
+			{
+				Centroid(0) = 0.0;
+				Centroid(1) = 0.0;
+				Centroid(2) = 0.0;
+			}
 
 			//~Cluster() { qDebug() << "~Cluster"; }
 		};
@@ -179,11 +181,17 @@ namespace CFF { namespace SciData
 							return NULL;
 						}
 
-						T value = grid->getValue(uvec3(i,j,k));
+						uvec3 coords(3);
+						coords(0) = i;
+						coords(1) = j;
+						coords(2) = k;
+						T value = grid->getValue(coords);
 						if(validator(i,j,k,value))
-						{
-							ClusterSP C = std::make_shared<Cluster>();
-							C->Centroid = dvec3(i,j,k);
+						{							ClusterSP C = std::make_shared<Cluster>();
+							C->Centroid = dvec3(3);
+							C->Centroid(0) = i;
+							C->Centroid(1) = j;
+							C->Centroid(2) = k;
 							C->Value = value;
 							C->Volume = 1;
 							C->ErrorLevel = 0;
@@ -234,13 +242,11 @@ namespace CFF { namespace SciData
 				{
 					warning = "Clustering procedure interrupted correctly :-)";
 					return NULL;
-				}
-
-				Cluster* C = iter.first;
+				}				Cluster* C = iter.first;
 				// Coordinates of the cluster
-				uint i = qRound(C->Centroid.x);
-				uint j = qRound(C->Centroid.y);
-				uint k = qRound(C->Centroid.z);
+				uint i = static_cast<uint>(std::round(C->Centroid(0)));
+				uint j = static_cast<uint>(std::round(C->Centroid(1)));
+				uint k = static_cast<uint>(std::round(C->Centroid(2)));
 
 				if( (i > 0) && (leafNodes(i-1,j,k) != NULL) )
 					C->Neighbours.insert(leafNodes(i-1,j,k));
@@ -304,11 +310,10 @@ namespace CFF { namespace SciData
 			 * of increasing size
 			 */
 			for(auto isolatedIter : isolatedLeaves)
-			{
-				Cluster* isolatedCluster = isolatedIter.second;
-				uint i = qRound(isolatedCluster->Centroid.x);
-				uint j = qRound(isolatedCluster->Centroid.y);
-				uint k = qRound(isolatedCluster->Centroid.z);
+			{				Cluster* isolatedCluster = isolatedIter.second;
+				uint i = static_cast<uint>(std::round(isolatedCluster->Centroid(0)));
+				uint j = static_cast<uint>(std::round(isolatedCluster->Centroid(1)));
+				uint k = static_cast<uint>(std::round(isolatedCluster->Centroid(2)));
 				//Variable to go in concentric cubes
 				int radius = 0;
 				int step = 1;
@@ -409,7 +414,7 @@ namespace CFF { namespace SciData
 					{
 						if(!aMergingCandidate.first->Clustered)
 						{
-							double tmp = (aMergingCandidate.first->Centroid - newCluster->Centroid).Length();
+							double tmp = boost::numeric::ublas::norm_2(aMergingCandidate.first->Centroid - newCluster->Centroid);
 							if (neighSearch.size() <= MAP_SIZE)
 							{
 								supportSet.insert(aMergingCandidate.first);
@@ -431,7 +436,7 @@ namespace CFF { namespace SciData
 						{
 //							qDebug() << newCluster->Centroid.x << newCluster->Centroid.y << newCluster->Centroid.z << "and"
 //									 << aMergingCandidate.second->Centroid.x << aMergingCandidate.second->Centroid.y << aMergingCandidate.second->Centroid.z << "are now neighbours.";
-							double tmp = (aMergingCandidate.second->Centroid - newCluster->Centroid).Length();
+							double tmp = boost::numeric::ublas::norm_2(aMergingCandidate.second->Centroid - newCluster->Centroid);
 							if (neighSearch.size() <= MAP_SIZE)
 							{
 								supportSet.insert(aMergingCandidate.second);
