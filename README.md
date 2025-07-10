@@ -1,20 +1,22 @@
 # Caffeine Clustering Library
 
-This is a standalone C++ library extracted from the Caffeine project, containing the core DataGrid3D and clustering functionality. The library has been migrated from mathfu to use Boost.uBLAS as its mathematical backend.
+A standalone C++ library extracted from the Caffeine project, containing core DataGrid3D and clustering functionality. The library uses Boost.uBLAS as its mathematical backend.
 
 ## Features
 
 - **DataGrid3D**: A 3D grid data structure for storing and manipulating volumetric data
-- **VectorField3D**: Specialized 3D grid for vector field data
+- **VectorField3D**: Specialized 3D grid for vector field data  
 - **GridClusterer**: Clustering algorithms for 3D grid data
+- **VectorClusterer**: Vector-specific clustering implementations
 - **VectorComparator**: Vector comparison utilities for clustering
 - **Math Utilities**: Mathematical operations using Boost.uBLAS library
 - **Python Bindings**: High-performance Python interface with NumPy integration
 
+
 ## Project Structure
 
 ```
-standalone_clustering/
+caffeine-clustering/
 ├── include/
 │   ├── SciData/
 │   │   ├── datagrid3d.h          # Core 3D grid data structure
@@ -25,26 +27,25 @@ standalone_clustering/
 │   └── Utilities/
 │       ├── boost_math_utilities.h # Math utilities using Boost.uBLAS
 │       ├── math3d.h              # 3D math operations
+│       ├── math_backend.h        # Math backend definitions
 │       ├── log.h                 # Logging utilities
 │       ├── array3d.h             # 3D array template
 │       ├── iterable_priority_queue.h # Priority queue implementation
 │       ├── index3d_hashing.h     # 3D coordinate hashing
 │       └── floating_point.h      # Floating point utilities
 ├── src/
-│   ├── boost_math_utilities.cpp
-│   ├── math3d.cpp
-│   ├── index3d_hashing.cpp
-│   ├── vector_comparator.cpp
-│   └── floating_point.cpp
-├── examples/
-│   ├── example_usage.cpp         # Basic usage example
-│   └── clustering_test.cpp       # Vector field test
+│   ├── boost_math_utilities.cpp  # Math utility implementations
+│   ├── math3d.cpp               # 3D math implementations
+│   ├── index3d_hashing.cpp      # Hashing implementations
+│   ├── vectorclusterer.cpp      # Vector clustering implementations
+│   ├── vector_comparator.cpp    # Vector comparison implementations
+│   └── floating_point.cpp      # Floating point utilities
 ├── python/
-│   └── bindings.cpp              # Python bindings with pybind11
-├── CMakeLists.txt               # Build configuration
-├── ClusteringConfig.cmake.in    # CMake package config
-├── PYTHON_BINDINGS.md           # Python bindings documentation
-└── README.md                    # This file
+│   ├── bindings.cpp             # Main Python bindings with pybind11
+├── CMakeLists.txt              # Build configuration
+├── ClusteringConfig.cmake.in   # CMake package config
+├── LICENSE.md                  # License information
+└── README.md                   # This file
 ```
 
 ## Dependencies
@@ -52,46 +53,36 @@ standalone_clustering/
 - **CMake 3.10+**: Build system
 - **C++17**: Language standard
 - **Boost**: Boost.uBLAS library for mathematical operations
-- **Qt5**: Core and Gui components (for vector conversion utilities)
 - **pkg-config**: For finding dependencies
 
 ### Optional Dependencies (for Python bindings)
 
-- **pybind11**: Python binding library
+- **pybind11**: Python binding library (automatically downloaded during build)
 - **NumPy**: For Python array integration
 - **Python 3.6+**: Python interpreter
 
 ## Building
 
 1. **Install dependencies**:
-   ```bash
-   sudo apt update
-   sudo apt install build-essential cmake pkg-config qtbase5-dev libboost-all-dev
-   ```
+
 
 2. **Clone and build**:
    ```bash
    git clone <repository>
-   cd standalone_clustering
+   cd caffeine-clustering
    mkdir build && cd build
    cmake ..
    make
    ```
 
-3. **Run examples**:
-   ```bash
-   ./clustering_example      # Basic usage
-   ./clustering_test         # Vector field test
-   ```
-
 ### Python Bindings
 
-The library includes optional Python bindings that provide high-performance access to the C++ functionality:
+The library includes optional Python bindings that provide high-performance access to the C++ functionality.
 
-1. **Quick setup**:
-   ```bash
-   python3 setup_python_bindings.py --test
-   ```
+1. **Dependencies**
+   - pybind11
+   - numpy
+
 
 2. **Manual build**:
    ```bash
@@ -100,7 +91,7 @@ The library includes optional Python bindings that provide high-performance acce
    make
    ```
 
-3. **Usage**:
+4. **Usage**:
    ```python
    import sys
    sys.path.insert(0, 'build')
@@ -118,8 +109,6 @@ The library includes optional Python bindings that provide high-performance acce
    field = cff.VectorField3D("field", 10, 10, 10)
    # ... work with NumPy arrays
    ```
-
-See `PYTHON_BINDINGS.md` for detailed documentation and examples.
 
 ## Usage
 
@@ -146,10 +135,6 @@ auto retrieved = field.getValue(makeVector3u(5, 5, 5));
 VectorComparator comparator(&field);
 ```
 
-### Advanced Features
-
-The library provides sophisticated clustering algorithms and vector analysis tools. See the `examples/` directory for detailed usage patterns.
-
 ## Build Options
 
 - **Debug build**: `cmake -DCMAKE_BUILD_TYPE=Debug ..`
@@ -175,27 +160,8 @@ target_link_libraries(your_target clustering_lib)
 
 ## Status
 
-✅ **Completed**:
-- Core DataGrid3D functionality
-- Vector field operations
-- Mathematical utilities with Boost.uBLAS
-- Basic clustering infrastructure
-- CMake build system
-- Example programs
-- Complete migration from mathfu to Boost
-- Python bindings with NumPy integration
-- Comprehensive documentation
-
-📝 **Potential Extensions**:
-- Full clustering algorithm implementations
-- Additional mathematical operations
-- Performance optimizations
-- Advanced Python features (matplotlib integration, etc.)
-
 ## License
 
-Extracted from the Caffeine project. See original project for licensing terms.
+Extracted from the Caffeine project. Same of the original project.
 
-## Contributing
 
-This is a standalone extraction. For the full Caffeine project, see the main repository.
