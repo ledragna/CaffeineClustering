@@ -1,6 +1,6 @@
 # Caffeine Clustering Library
 
-A standalone C++ library extracted from the Caffeine project, containing core DataGrid3D and clustering functionality. The library uses Boost.uBLAS as its mathematical backend.
+A standalone C++ library extracted from the Caffeine project originally developed by Andrea Salvadori, containing core DataGrid3D and clustering functionality. The library uses Boost.uBLAS as its mathematical backend.
 
 ## Features
 
