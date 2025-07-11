@@ -65,14 +65,6 @@ set(HEADERS
 add_library(clustering_lib STATIC ${SOURCES} ${HEADERS})
 # No external library linking needed for clustering_lib
 
-# Example executable
-add_executable(clustering_example examples/example_usage.cpp)
-target_link_libraries(clustering_example clustering_lib)
-
-# Clustering test executable
-add_executable(clustering_test examples/clustering_test.cpp)
-target_link_libraries(clustering_test clustering_lib)
-
 # Python bindings (optional)
 if(BUILD_PYTHON_BINDINGS AND pybind11_FOUND)
     pybind11_add_module(pycaffeine_clustering python/bindings.cpp)
