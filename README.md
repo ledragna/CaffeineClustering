@@ -10,7 +10,6 @@ A standalone C++ library extracted from the Caffeine project originally develope
 - **VectorClusterer**: Vector-specific clustering implementations
 - **VectorComparator**: Vector comparison utilities for clustering
 - **Math Utilities**: Mathematical operations using Boost.uBLAS library
-- **Python Bindings**: High-performance Python interface with NumPy integration
 
 
 ## Project Structure
@@ -40,8 +39,9 @@ caffeine-clustering/
 │   ├── vectorclusterer.cpp      # Vector clustering implementations
 │   ├── vector_comparator.cpp    # Vector comparison implementations
 │   └── floating_point.cpp      # Floating point utilities
-├── python/
-│   ├── bindings.cpp             # Main Python bindings with pybind11
+├── examples/
+│   ├── example_usage.cpp        # Basic usage examples
+│   └── clustering_test.cpp      # Clustering test examples
 ├── CMakeLists.txt              # Build configuration
 ├── ClusteringConfig.cmake.in   # CMake package config
 ├── LICENSE.md                  # License information
@@ -54,12 +54,6 @@ caffeine-clustering/
 - **C++17**: Language standard
 - **Boost**: Boost.uBLAS library for mathematical operations
 - **pkg-config**: For finding dependencies
-
-### Optional Dependencies (for Python bindings)
-
-- **pybind11**: Python binding library (automatically downloaded during build)
-- **NumPy**: For Python array integration
-- **Python 3.6+**: Python interpreter
 
 ## Building
 
@@ -75,42 +69,9 @@ caffeine-clustering/
    make
    ```
 
-### Python Bindings
-
-The library includes optional Python bindings that provide high-performance access to the C++ functionality.
-
-1. **Dependencies**
-   - pybind11
-   - numpy
-
-
-2. **Manual build**:
-   ```bash
-   mkdir build && cd build
-   cmake -DBUILD_PYTHON_BINDINGS=ON ..
-   make
-   ```
-
-4. **Usage**:
-   ```python
-   import sys
-   sys.path.insert(0, 'build')
-   import pycaffeine_clustering as cff
-   
-   # Create vectors
-   v1 = cff.utils.make_vector3d(1.0, 2.0, 3.0)
-   v2 = cff.utils.make_vector3d(4.0, 5.0, 6.0)
-   
-   # Mathematical operations
-   norm = cff.utils.norm(v1)
-   dot_product = cff.utils.dot(v1, v2)
-   
-   # Vector field operations
-   field = cff.VectorField3D("field", 10, 10, 10)
-   # ... work with NumPy arrays
-   ```
-
 ## Usage
+
+The library provides a comprehensive C++ API for 3D data clustering and vector field analysis.
 
 ### Basic DataGrid3D Usage
 
@@ -139,7 +100,6 @@ VectorComparator comparator(&field);
 
 - **Debug build**: `cmake -DCMAKE_BUILD_TYPE=Debug ..`
 - **Release build**: `cmake -DCMAKE_BUILD_TYPE=Release ..`
-- **Python bindings**: `cmake -DBUILD_PYTHON_BINDINGS=ON ..`
 
 ## Installation
 
@@ -159,6 +119,8 @@ target_link_libraries(your_target clustering_lib)
 ```
 
 ## Status
+
+This is a pure C++ library extracted from the Caffeine project. All Qt dependencies have been removed and replaced with Boost.uBLAS for mathematical operations.
 
 ## License
 

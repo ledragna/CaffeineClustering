@@ -14,21 +14,7 @@ if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost not found! Install with: sudo apt install libboost-all-dev")
 endif()
 
-# Optional: Find pybind11 for Python bindings
-option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
-if(BUILD_PYTHON_BINDINGS)
-    find_package(pybind11 QUIET)
-    if(NOT pybind11_FOUND)
-        # Try to use pybind11 as a submodule or download it
-        include(FetchContent)
-        FetchContent_Declare(
-            pybind11
-            GIT_REPOSITORY https://github.com/pybind/pybind11.git
-            GIT_TAG v2.11.1
-        )
-        FetchContent_MakeAvailable(pybind11)
-    endif()
-endif()
+# No Python bindings in this branch
 
 # Include directories
 include_directories(
@@ -65,18 +51,7 @@ set(HEADERS
 add_library(clustering_lib STATIC ${SOURCES} ${HEADERS})
 # No external library linking needed for clustering_lib
 
-# Python bindings (optional)
-if(BUILD_PYTHON_BINDINGS AND pybind11_FOUND)
-    pybind11_add_module(pycaffeine_clustering python/bindings.cpp)
-    target_link_libraries(pycaffeine_clustering PRIVATE clustering_lib)
-    target_compile_definitions(pycaffeine_clustering PRIVATE VERSION_INFO=${PROJECT_VERSION})
-    
-    # Set properties for the Python module
-    set_target_properties(pycaffeine_clustering PROPERTIES
-        CXX_VISIBILITY_PRESET "hidden"
-        VISIBILITY_INLINES_HIDDEN YES
-    )
-endif()
+# No Python bindings in this branch
 
 # Enable debug symbols
 set(CMAKE_BUILD_TYPE Debug)
